@@ -138,9 +138,15 @@ document.getElementById("assessmentDate").textContent =
 
         button.addEventListener("click", function () {
 
-            answers[questionNumber - 1] = Number(this.dataset.score);
+            document
+    .querySelectorAll(".score-buttons button")
+    .forEach(btn => btn.classList.remove("selected"));
 
-            console.log(answers);
+this.classList.add("selected");
+
+answers[questionNumber - 1] = Number(this.dataset.score);
+
+console.log(answers);
 
         });
 
