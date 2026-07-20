@@ -9,7 +9,7 @@ body{
     background:#f5f7fb;
     color:#222;
     display:flex;
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
     min-height:100vh;
     padding:20px;
