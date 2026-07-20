@@ -117,6 +117,11 @@ document.getElementById("assessmentDate").textContent =
 
 <p>${questions[questionNumber - 1].instructionHindi}</p>
 
+<div class="score-labels">
+    <span>Poor</span>
+    <span>Excellent</span>
+</div>
+
 <div class="score-buttons">
 
     ${Array.from({ length: 10 }, (_, i) => `
