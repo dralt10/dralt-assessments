@@ -1,10 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     const app = document.getElementById("app");
-    const questions = [
+  const questions = [
     {
         english: "Bowel Movement",
-        hindi: "मल त्याग"
+        hindi: "मल त्याग",
+        instructionEnglish: "Rate your bowel movement.",
+        instructionHindi: "अपने मल त्याग को अंक दें।"
+    },
+    {
+        english: "Tongue",
+        hindi: "जीभ",
+        instructionEnglish: "",
+        instructionHindi: ""
+    },
+    {
+        english: "Appetite",
+        hindi: "भूख",
+        instructionEnglish: "",
+        instructionHindi: ""
     }
 ];
     const beginButton = document.getElementById("beginButton");
