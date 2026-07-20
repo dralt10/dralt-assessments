@@ -62,6 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     </div>
         `;
+        document
+    .getElementById("continueButton")
+    .addEventListener("click", showQuestion1);
         const today = new Date();
 
 const options = {
@@ -72,6 +75,9 @@ const options = {
 
 document.getElementById("assessmentDate").textContent =
     today.toLocaleDateString("en-GB", options);
+        document
+    .getElementById("continueButton")
+    .addEventListener("click", showQuestion1);
 
     }
 
