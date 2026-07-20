@@ -49,11 +49,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     <label>Assessment Date</label>
 
-    <div class="info-box">
-        20 July 2026<br>
-        <small>✓ Auto Recorded</small>
-    </div>
+<div class="info-box">
 
+    <div id="assessmentDate"></div>
+
+    <small>✓ Auto Recorded</small>
+
+</div>
     <button id="continueButton">
         Continue →
     </button>
