@@ -230,3 +230,7 @@ select:focus{
     gap:12px;
     margin-top:15px;
 }
+.selected{
+    background:#ae275f;
+    color:white;
+}
