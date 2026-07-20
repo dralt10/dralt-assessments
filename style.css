@@ -141,3 +141,54 @@ select:focus{
 #app h2{
     margin-bottom:25px;
 }
+
+.screen-header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.form-card{
+    background:#ffffff;
+    border-radius:20px;
+    padding:30px 25px;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+    text-align:left;
+}
+
+.form-card h3{
+    color:#ae275f;
+    text-align:center;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.form-card .welcome{
+    text-align:center;
+    color:#666;
+    margin-bottom:30px;
+}
+
+.form-card label{
+    display:block;
+    font-weight:600;
+    margin-top:18px;
+    margin-bottom:8px;
+    color:#444;
+}
+
+.info-box{
+    background:#f8f8f8;
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    padding:16px;
+    margin-top:8px;
+    text-align:center;
+    color:#555;
+}
+
+.step-text{
+    margin-top:20px;
+    text-align:center;
+    color:#888;
+    font-size:14px;
+}
