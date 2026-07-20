@@ -60,17 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         Continue →
     </button>
 
-               <div class="progress-container">
-
-    <div class="progress-bar"></div>
-
-</div>
-
-<div class="progress-text">
-    Step 1 of 12
-</div>
-
-</div>
+    </div>
         `;
         const today = new Date();
 
