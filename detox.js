@@ -12,16 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         <div class="screen-header">
 
-        <div class="progress-container">
-
-    <div class="progress-bar"></div>
-
-</div>
-
-<div class="progress-text">
-    Step 1 of 12
-</div>
-
     <div class="logo-area">
         <!-- DRALT Logo -->
     </div>
@@ -70,9 +60,15 @@ document.addEventListener("DOMContentLoaded", function () {
         Continue →
     </button>
 
-    <div class="step-text">
-        Step 1 of 12
-    </div>
+               <div class="progress-container">
+
+    <div class="progress-bar"></div>
+
+</div>
+
+<div class="progress-text">
+    Step 1 of 12
+</div>
 
 </div>
         `;
