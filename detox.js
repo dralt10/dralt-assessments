@@ -126,7 +126,7 @@ document.getElementById("assessmentDate").textContent =
 <div class="score-buttons">
 
     ${Array.from({ length: 10 }, (_, i) => `
-        <button>${i + 1}</button>
+        <button data-score="${i + 1}">${i + 1}</button>
     `).join("")}
 
 </div>
