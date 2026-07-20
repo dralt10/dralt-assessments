@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         <div class="screen-header">
 
+        <div class="progress-container">
+
+    <div class="progress-bar"></div>
+
+</div>
+
+<div class="progress-text">
+    Step 1 of 12
+</div>
+
     <div class="logo-area">
         <!-- DRALT Logo -->
     </div>
