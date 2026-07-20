@@ -132,6 +132,19 @@ document.getElementById("assessmentDate").textContent =
 </div>
 
 `;
+        document
+    .querySelectorAll(".score-buttons button")
+    .forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            answers[questionNumber - 1] = Number(this.dataset.score);
+
+            console.log(answers);
+
+        });
+
+    });
 }
 
 });
