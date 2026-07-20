@@ -109,6 +109,10 @@ document.getElementById("assessmentDate").textContent =
     <h3>${questions[questionNumber - 1].english}</h3>
 
 <h4>${questions[questionNumber - 1].hindi}</h4>
+<p>${questions[questionNumber - 1].instructionEnglish}</p>
+
+<p>${questions[questionNumber - 1].instructionHindi}</p>
+
 <div class="score-buttons">
 
     ${Array.from({ length: 10 }, (_, i) => `
