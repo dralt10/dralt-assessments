@@ -84,12 +84,11 @@ document.getElementById("assessmentDate").textContent =
     }
     function showQuestion(questionNumber) {
 
-    app.innerHTML = `
+   app.innerHTML = `
 
-        <h2>Question 1 of 10</h2>
+    <h2>Question ${questionNumber} of 10</h2>
 
-    `;
-
+`;
 }
 
 });
