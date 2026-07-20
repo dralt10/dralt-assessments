@@ -27,7 +27,7 @@ body{
 
 .logo-area{
     margin-bottom:20px;
-    min-height:80px;
+    min-height:auto;
 }
 
 h1{
