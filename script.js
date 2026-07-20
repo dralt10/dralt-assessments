@@ -1,15 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-const startButton = document.getElementById("startButton");
+    // ===== DRALT Assessment Engine =====
 
-if(startButton){
+    const startButton = document.getElementById("startButton");
 
-startButton.addEventListener("click", function(){
+    if (startButton) {
 
-alert("Welcome to the DRALT Health Assessment Engine.\n\nThe Detox Health Score will be added in the next step.");
+        startButton.addEventListener("click", function () {
 
-});
+            window.location.href = "detox.html";
 
-}
+        });
+
+    }
 
 });
