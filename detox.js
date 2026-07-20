@@ -24,6 +24,7 @@ const questions = [
 ];
 
 const totalQuestions = questions.length;
+    let answers = [];
 
 const beginButton = document.getElementById("beginButton");
 
