@@ -75,12 +75,14 @@ const options = {
 
 document.getElementById("assessmentDate").textContent =
     today.toLocaleDateString("en-GB", options);
-        document
+   document
     .getElementById("continueButton")
-    .addEventListener("click", showQuestion1);
+    .addEventListener("click", function () {
+        showQuestion(1);
+    });
 
     }
-    function showQuestion1() {
+    function showQuestion(questionNumber) {
 
     app.innerHTML = `
 
