@@ -92,6 +92,9 @@ document.getElementById("assessmentDate").textContent =
    app.innerHTML = `
 
     <h2>Question ${questionNumber} of 10</h2>
+    <h3>${questions[questionNumber - 1].english}</h3>
+
+<h4>${questions[questionNumber - 1].hindi}</h4>
 
 `;
 }
