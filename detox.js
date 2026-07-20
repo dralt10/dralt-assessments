@@ -80,5 +80,14 @@ document.getElementById("assessmentDate").textContent =
     .addEventListener("click", showQuestion1);
 
     }
+    function showQuestion1() {
+
+    app.innerHTML = `
+
+        <h2>Question 1 of 10</h2>
+
+    `;
+
+}
 
 });
