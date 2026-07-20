@@ -8,48 +8,106 @@ body{
     font-family:Arial,Helvetica,sans-serif;
     background:#f5f7fb;
     color:#222;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
 }
 
 #app{
-    max-width:900px;
-    margin:60px auto;
+    width:100%;
+    max-width:520px;
     background:#ffffff;
-    padding:40px;
-    border-radius:16px;
+    border-radius:20px;
+    padding:35px 25px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
+    text-align:center;
+}
+
+.logo-area{
+    margin-bottom:20px;
+    min-height:80px;
 }
 
 h1{
     color:#ae275f;
-    text-align:center;
-    margin-bottom:10px;
+    font-size:32px;
+    margin-bottom:8px;
 }
 
 h2{
-    text-align:center;
-    color:#555;
+    font-size:22px;
+    color:#444;
+    margin-bottom:18px;
+}
+
+.tagline{
+    font-size:18px;
+    font-weight:600;
+    color:#666;
     margin-bottom:30px;
 }
 
-p{
-    font-size:18px;
-    text-align:center;
+.welcome,
+.welcome-hi{
+    font-size:17px;
+    line-height:1.6;
     margin-bottom:15px;
 }
 
 button{
-    display:block;
-    margin:40px auto;
+    width:100%;
     background:#ae275f;
-    color:white;
+    color:#fff;
     border:none;
-    padding:15px 35px;
-    font-size:18px;
-    border-radius:8px;
+    border-radius:14px;
+    padding:18px;
+    font-size:20px;
+    font-weight:bold;
     cursor:pointer;
-    transition:.3s;
+    margin-top:35px;
+    transition:.25s;
 }
 
 button:hover{
     background:#8d1f4d;
+}
+
+footer{
+    margin-top:40px;
+    border-top:1px solid #eeeeee;
+    padding-top:20px;
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+}
+
+@media (max-width:600px){
+
+    #app{
+        padding:25px 18px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    h2{
+        font-size:20px;
+    }
+
+    .tagline{
+        font-size:16px;
+    }
+
+    .welcome,
+    .welcome-hi{
+        font-size:16px;
+    }
+
+    button{
+        font-size:18px;
+    }
+
 }
