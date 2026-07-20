@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    const app = document.getElementById("app");
-  const questions = [
+const app = document.getElementById("app");
+
+const questions = [
     {
         english: "Bowel Movement",
         hindi: "मल त्याग",
@@ -21,7 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
         instructionHindi: ""
     }
 ];
-    const beginButton = document.getElementById("beginButton");
+
+const totalQuestions = questions.length;
+
+const beginButton = document.getElementById("beginButton");
 
     beginButton.addEventListener("click", showPatientForm);
 
