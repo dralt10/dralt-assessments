@@ -192,3 +192,28 @@ select:focus{
     color:#888;
     font-size:14px;
 }
+
+/* Progress Bar */
+
+.progress-container{
+    width:100%;
+    height:8px;
+    background:#e5e7eb;
+    border-radius:50px;
+    overflow:hidden;
+    margin-bottom:10px;
+}
+
+.progress-bar{
+    width:8%;
+    height:100%;
+    background:#ae275f;
+    border-radius:50px;
+}
+
+.progress-text{
+    text-align:right;
+    font-size:14px;
+    color:#777;
+    margin-bottom:30px;
+}
