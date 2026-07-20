@@ -10,9 +10,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         app.innerHTML = `
 
-        <h1>Patient Details</h1>
-
-        <h2>रोगी की जानकारी</h2>
+        <h1>Let's Get Started</h1>
+        
+        <h2>चलिए शुरू करें</h2>
+        
+        <p class="welcome">
+        Please enter your details to begin the assessment.
+        </p>
+        
+        <p class="welcome-hi">
+        अपनी जानकारी भरकर असेसमेंट शुरू करें।
+        </p>
 
         <input type="text" id="name" placeholder="Full Name">
 
