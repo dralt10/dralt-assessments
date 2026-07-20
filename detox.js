@@ -10,40 +10,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
         app.innerHTML = `
 
-        <h1>Let's Get Started</h1>
-        
-        <h2>चलिए शुरू करें</h2>
-        
-        <p class="welcome">
+        <div class="screen-header">
+
+    <div class="logo-area">
+        <!-- DRALT Logo -->
+    </div>
+
+    <h1>DRALT Detox Health Score</h1>
+
+    <h2>ड्राल्ट डिटॉक्स हेल्थ स्कोर</h2>
+
+</div>
+
+<div class="form-card">
+
+    <h3>Let's Get Started</h3>
+
+    <p class="welcome">
         Please enter your details to begin the assessment.
-        </p>
-        
-        <p class="welcome-hi">
-        अपनी जानकारी भरकर असेसमेंट शुरू करें।
-        </p>
+    </p>
 
-        <input type="text" id="name" placeholder="Full Name">
+    <label>Full Name</label>
+    <input type="text" id="name">
 
-        <input type="tel" id="mobile" placeholder="WhatsApp / Mobile Number">
+    <label>WhatsApp / Mobile Number</label>
+    <input type="tel" id="mobile">
 
-        <input type="number" id="age" placeholder="Age">
+    <label>Age</label>
+    <input type="number" id="age">
 
-        <select id="gender">
+    <label>Gender</label>
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+    </select>
 
-            <option value="">Select Gender</option>
+    <label>Assessment Date</label>
 
-            <option>Male</option>
+    <div class="info-box">
+        20 July 2026<br>
+        <small>✓ Auto Recorded</small>
+    </div>
 
-            <option>Female</option>
+    <button id="continueButton">
+        Continue →
+    </button>
 
-            <option>Other</option>
+    <div class="step-text">
+        Step 1 of 12
+    </div>
 
-        </select>
-
-        <button id="continueButton">
-        Continue
-        </button>
-
+</div>
         `;
 
     }
