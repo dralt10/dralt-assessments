@@ -223,3 +223,10 @@ select:focus{
     margin:20px 0 10px;
     font-weight:600;
 }
+
+.score-buttons{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-top:15px;
+}
