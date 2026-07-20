@@ -66,6 +66,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </div>
         `;
+        const today = new Date();
+
+const options = {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+};
+
+document.getElementById("assessmentDate").textContent =
+    today.toLocaleDateString("en-GB", options);
 
     }
 
