@@ -12,33 +12,33 @@ const questions = [
     {
         english: "Tongue",
         hindi: "जीभ",
-        instructionEnglish: "",
-        instructionHindi: ""
+        instructionEnglish: "Rate your tongue health.",
+        instructionHindi: "अपनी जीभ की स्थिति को अंक दें।"
     },
     {
         english: "Appetite",
         hindi: "भूख",
-        instructionEnglish: "",
-        instructionHindi: ""
+        instructionEnglish: "Rate your appetite.",
+        instructionHindi: "अपनी भूख को अंक दें।"
     }
 ];
 
 const totalQuestions = questions.length;
-    let answers = [];
+let answers = [];
 
 const beginButton = document.getElementById("beginButton");
 
+if (beginButton) {
     beginButton.addEventListener("click", showPatientForm);
+}
 
-    function showPatientForm() {
+function showPatientForm() {
 
-        app.innerHTML = `
+    app.innerHTML = `
 
-        <div class="screen-header">
+<div class="screen-header">
 
-    <div class="logo-area">
-        <!-- DRALT Logo -->
-    </div>
+    <div class="logo-area"></div>
 
     <h1>DRALT Detox Health Score</h1>
 
@@ -48,109 +48,121 @@ const beginButton = document.getElementById("beginButton");
 
 <div class="form-card">
 
-    <h3>Let's Get Started</h3>
+<h3>Let's Get Started</h3>
 
-    <p class="welcome">
-        Please enter your details to begin the assessment.
-    </p>
+<p class="welcome">
+Please enter your details to begin the assessment.
+</p>
 
-    <label>Full Name</label>
-    <input type="text" id="name">
+<label>Full Name</label>
+<input type="text" id="name">
 
-    <label>WhatsApp / Mobile Number</label>
-    <input type="tel" id="mobile">
+<label>WhatsApp / Mobile Number</label>
+<input type="tel" id="mobile">
 
-    <label>Age</label>
-    <input type="number" id="age">
+<label>Age</label>
+<input type="number" id="age">
 
-    <label>Gender</label>
-    <select id="gender">
-        <option value="">Select Gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-    </select>
+<label>Gender</label>
+<select id="gender">
+<option value="">Select Gender</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
 
-    <label>Assessment Date</label>
+<label>Assessment Date</label>
 
 <div class="info-box">
+<div id="assessmentDate"></div>
+<small>✓ Auto Recorded</small>
+</div>
 
-    <div id="assessmentDate"></div>
-
-    <small>✓ Auto Recorded</small>
+<button id="continueButton">
+Continue →
+</button>
 
 </div>
-    <button id="continueButton">
-        Continue →
-    </button>
+`;
 
-    </div>
-        `;
-        document
-    .getElementById("continueButton")
-    .addEventListener("click", showQuestion1);
-        const today = new Date();
+    const today = new Date();
 
-const options = {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-};
+    document.getElementById("assessmentDate").textContent =
+        today.toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
 
-document.getElementById("assessmentDate").textContent =
-    today.toLocaleDateString("en-GB", options);
-   document
-    .getElementById("continueButton")
-    .addEventListener("click", function () {
+    document.getElementById("continueButton").addEventListener("click", function () {
         showQuestion(1);
     });
 
-    }
-    function showQuestion(questionNumber) {
+}
 
-   app.innerHTML = `
+function showQuestion(questionNumber) {
 
-    <h2>Question ${questionNumber} of ${totalQuestions}</h2>
-    <h3>${questions[questionNumber - 1].english}</h3>
+    app.innerHTML = `
+
+<h2>Question ${questionNumber} of ${totalQuestions}</h2>
+
+<h3>${questions[questionNumber - 1].english}</h3>
 
 <h4>${questions[questionNumber - 1].hindi}</h4>
+
 <p>${questions[questionNumber - 1].instructionEnglish}</p>
 
 <p>${questions[questionNumber - 1].instructionHindi}</p>
 
 <div class="score-labels">
-    <span>Poor</span>
-    <span>Excellent</span>
+<span>Poor</span>
+<span>Excellent</span>
 </div>
 
 <div class="score-buttons">
 
-    ${Array.from({ length: 10 }, (_, i) => `
-        <button data-score="${i + 1}">${i + 1}</button>
-    `).join("")}
+${Array.from({length:10},(_,i)=>`
+<button data-score="${i+1}">
+${i+1}
+</button>
+`).join("")}
 
 </div>
 
 `;
-        document
-    .querySelectorAll(".score-buttons button")
-    .forEach(button => {
+
+    document.querySelectorAll(".score-buttons button").forEach(button => {
 
         button.addEventListener("click", function () {
 
-            document
-    .querySelectorAll(".score-buttons button")
-    .forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll(".score-buttons button")
+                .forEach(btn => btn.classList.remove("selected"));
 
-this.classList.add("selected");
+            this.classList.add("selected");
 
-answers[questionNumber - 1] = Number(this.dataset.score);
+            answers[questionNumber - 1] = Number(this.dataset.score);
 
-console.log(answers);
+            if (questionNumber < totalQuestions) {
+
+                setTimeout(function () {
+                    showQuestion(questionNumber + 1);
+                }, 300);
+
+            } else {
+
+                app.innerHTML = `
+                <h2>Assessment Completed</h2>
+                <p>Thank you.</p>
+                <p>Your Answers:</p>
+                <pre>${JSON.stringify(answers, null, 2)}</pre>
+                `;
+
+            }
 
         });
 
     });
+
 }
 
 });
