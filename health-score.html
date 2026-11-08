@@ -1,1 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALT Health Score Assessment</title>
 
+<style>
+:root {
+  --magenta: #ae275f;
+  --light: #fff3f8;
+  --dark: #29212a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 12px;
+  font-family: Arial, sans-serif;
+  background: #f8f5f7;
+  color: var(--dark);
+}
+
+.container {
+  max-width: 720px;
+  margin: auto;
+}
+
+.header {
+  background: var(--magenta);
+  color: white;
+  padding: 26px 18px;
+  text-align: center;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.3;
+}
+
+.header p {
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.progress-wrap {
+  background: #e8dce2;
+  border-radius: 20px;
+  height: 8px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 0;
+  background: var(--magenta);
+  transition: width 0.3s ease;
+}
+
+.question {
+  background: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 13px;
+  border: 1px solid #eadfe5;
+}
+
+.question h3 {
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 0 0 15px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  margin: 8px 0;
+  border: 1px solid #e7dce2;
+  border-radius: 10px;
+  cursor: pointer;
+  line-height: 1.4;
+  font-size: 15px;
+}
+
+.option:has(input:checked) {
+  background: var(--light);
+  border-color: var(--magenta);
+}
+
+.option input {
+  accent-color: var(--magenta);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.note {
+  color: #6b5a64;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.result {
+  display: none;
+  text-align: center;
+  background: white;
+  border: 2px solid var(--magenta);
+  border-radius: 18px;
+  padding: 35px 15px;
+  margin: 25px 0;
+}
+
+.result h2 {
+  color: var(--magenta);
+  font-size: 24px;
+  margin: 0 0 18px;
+}
+
+.score {
+  color: var(--magenta);
+  font-size: clamp(48px, 12vw, 76px);
+  font-weight: bold;
+}
+
+.restart {
+  margin-top: 22px;
+  border: none;
+  background: var(--magenta);
+  color: white;
+  padding: 13px 24px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.disclaimer {
+  text-align: center;
+  color: #776873;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 15px 8px;
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .question {
+    padding: 16px;
+  }
+
+  .question h3 {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <header class="header">
+    <h1>DRALT HEALTH SCORE ASSESSMENT</h1>
+    <p>Understand your health through everyday habits and experiences</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <p id="progressText" style="text-align:center;font-size:14px;">
+    0 of 10 questions completed
+  </p>
+
+  <form id="assessment">
+
+    <div class="question">
+      <h3>1. Aapka pet saaf hone aur toilet jaane ka routine kaisa rehta hai?</h3>
+      <label class="option"><input type="radio" name="q1" value="0"> A. Aksar dikkat hoti hai</label>
+      <label class="option"><input type="radio" name="q1" value="3"> B. Kabhi theek, kabhi dikkat</label>
+      <label class="option"><input type="radio" name="q1" value="7"> C. Zyada tar theek</label>
+      <label class="option"><input type="radio" name="q1" value="10"> D. Regular aur bina dikkat</label>
+    </div>
+
+    <div class="question">
+      <h3>2. Aap roz apni jeebh aur munh ki safai kitni regularly karte hain?</h3>
+      <label class="option"><input type="radio" name="q2" value="0"> A. Bahut kam ya nahi</label>
+      <label class="option"><input type="radio" name="q2" value="3"> B. Kabhi-kabhi</label>
+      <label class="option"><input type="radio" name="q2" value="7"> C. Zyada tar din</label>
+      <label class="option"><input type="radio" name="q2" value="10"> D. Roz regularly</label>
+    </div>
+
+    <div class="question">
+      <h3>3. 1 minute halki jagah par walking ke baad aapki saans aur recovery kaisi rehti hai?</h3>
+      <label class="option"><input type="radio" name="q3" value="0"> A. Saans mein bahut dikkat / recovery mushkil</label>
+      <label class="option"><input type="radio" name="q3" value="3"> B. Kaafi discomfort</label>
+      <label class="option"><input type="radio" name="q3" value="7"> C. Halki dikkat, jaldi normal</label>
+      <label class="option"><input type="radio" name="q3" value="10"> D. Aaram se, saans jaldi normal</label>
+      <p class="note">Saans normal rakhein, rokein nahi. Agar exercise aapke liye unsafe ho ya discomfort ho, to ise skip karein aur healthcare professional se salah lein.</p>
+    </div>
+
+    <div class="question">
+      <h3>4. Aap hafte mein kitni regularly fruits khate hain?</h3>
+      <label class="option"><input type="radio" name="q4" value="0"> A. Bahut kam ya bilkul nahi</label>
+      <label class="option"><input type="radio" name="q4" value="3"> B. Kuch din</label>
+      <label class="option"><input type="radio" name="q4" value="7"> C. Aksar roz</label>
+      <label class="option"><input type="radio" name="q4" value="10"> D. Roz, apni zaroorat ke hisab se</label>
+    </div>
+
+    <div class="question">
+      <h3>5. Aap apne weight aur khane-peene ko lekar kitne satisfied hain?</h3>
+      <label class="option"><input type="radio" name="q5" value="0"> A. Bahut concern hai</label>
+      <label class="option"><input type="radio" name="q5" value="3"> B. Kuch concern hai</label>
+      <label class="option"><input type="radio" name="q5" value="7"> C. Mostly satisfied, thoda improve karna hai</label>
+      <label class="option"><input type="radio" name="q5" value="10"> D. Apni health needs ke hisab se satisfied</label>
+    </div>
+
+    <div class="question">
+      <h3>6. Neend ke baad subah aapki energy aur freshness kaisi hoti hai?</h3>
+      <label class="option"><input type="radio" name="q6" value="0"> A. Aksar thakan rehti hai</label>
+      <label class="option"><input type="radio" name="q6" value="3"> B. Kabhi fresh, kabhi tired</label>
+      <label class="option"><input type="radio" name="q6" value="7"> C. Mostly fresh</label>
+      <label class="option"><input type="radio" name="q6" value="10"> D. Usually achhi energy rehti hai</label>
+    </div>
+
+    <div class="question">
+      <h3>7. Aapki health ki pareshani aapke daily life ko kitna affect karti hai?</h3>
+      <label class="option"><input type="radio" name="q7" value="0"> A. Bahut zyada</label>
+      <label class="option"><input type="radio" name="q7" value="3"> B. Kaafi</label>
+      <label class="option"><input type="radio" name="q7" value="7"> C. Kabhi-kabhi</label>
+      <label class="option"><input type="radio" name="q7" value="10"> D. Koi significant pareshani nahi</label>
+    </div>
+
+    <div class="question">
+      <h3>8. Chalne, baithne, khade hone aur daily kaam karne mein aapko kaisa lagta hai?</h3>
+      <label class="option"><input type="radio" name="q8" value="0"> A. Aksar dikkat hoti hai</label>
+      <label class="option"><input type="radio" name="q8" value="3"> B. Kuch activities mein dikkat hoti hai</label>
+      <label class="option"><input type="radio" name="q8" value="7"> C. Mostly comfortable</label>
+      <label class="option"><input type="radio" name="q8" value="10"> D. Daily activities aasani se hoti hain</label>
+    </div>
+
+    <div class="question">
+      <h3>9. Mausam ya routine badalne par adjust karne mein kaisa lagta hai?</h3>
+      <label class="option"><input type="radio" name="q9" value="0"> A. Aksar dikkat hoti hai</label>
+      <label class="option"><input type="radio" name="q9" value="3"> B. Kabhi-kabhi dikkat hoti hai</label>
+      <label class="option"><input type="radio" name="q9" value="7"> C. Mostly adjust kar leta/leti hoon</label>
+      <label class="option"><input type="radio" name="q9" value="10"> D. Aasani se adjust kar leta/leti hoon</label>
+    </div>
+
+    <div class="question">
+      <h3>10. Daily movements mein apna balance aur stability kaisa mehsoos karte hain?</h3>
+      <label class="option"><input type="radio" name="q10" value="0"> A. Aksar unstable mehsoos hota hai</label>
+      <label class="option"><input type="radio" name="q10" value="3"> B. Kabhi-kabhi issue hota hai</label>
+      <label class="option"><input type="radio" name="q10" value="7"> C. Mostly stable</label>
+      <label class="option"><input type="radio" name="q10" value="10"> D. Usual movements mein stable</label>
+    </div>
+
+  </form>
+
+  <div class="result" id="result">
+    <h2>YOUR DRALT HEALTH SCORE</h2>
+    <div class="score"><span id="scoreValue">0</span> / 100</div>
+    <button class="restart" onclick="restartAssessment()">Retake Assessment</button>
+  </div>
+
+  <div class="disclaimer">
+    This assessment is for general health awareness and self-reflection only.
+    It is not a medical diagnosis or a substitute for professional medical advice.
+  </div>
+
+</div>
+
+<script>
+const form = document.getElementById("assessment");
+const progress = document.getElementById("progress");
+const progressText = document.getElementById("progressText");
+const result = document.getElementById("result");
+const scoreValue = document.getElementById("scoreValue");
+
+form.addEventListener("change", function () {
+  let completed = 0;
+  let totalScore = 0;
+
+  for (let i = 1; i <= 10; i++) {
+    const answer = form.querySelector('input[name="q' + i + '"]:checked');
+
+    if (answer) {
+      completed++;
+      totalScore += Number(answer.value);
+    }
+  }
+
+  progress.style.width = (completed * 10) + "%";
+  progressText.textContent = completed + " of 10 questions completed";
+
+  if (completed === 10) {
+    scoreValue.textContent = totalScore;
+    result.style.display = "block";
+    result.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    result.style.display = "none";
+  }
+});
+
+function restartAssessment() {
+  form.reset();
+  result.style.display = "none";
+  progress.style.width = "0%";
+  progressText.textContent = "0 of 10 questions completed";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+
+</body>
+</html>
