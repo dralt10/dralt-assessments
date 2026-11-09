@@ -1,325 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DRALT Health Score Assessment</title>
-
 <style>
-:root {
-  --magenta: #ae275f;
-  --light: #fff3f8;
-  --dark: #29212a;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 20px 12px;
-  font-family: Arial, sans-serif;
-  background: #f8f5f7;
-  color: var(--dark);
-}
-
-.container {
-  max-width: 720px;
-  margin: auto;
-}
-
-.header {
-  background: var(--magenta);
-  color: white;
-  padding: 26px 18px;
-  text-align: center;
-  border-radius: 16px;
-  margin-bottom: 20px;
-}
-
-.header h1 {
-  margin: 0;
-  font-size: 25px;
-  line-height: 1.3;
-}
-
-.header p {
-  margin: 10px 0 0;
-  font-size: 14px;
-}
-
-.progress-wrap {
-  background: #e8dce2;
-  border-radius: 20px;
-  height: 8px;
-  margin: 18px 0;
-  overflow: hidden;
-}
-
-.progress {
-  height: 100%;
-  width: 0;
-  background: var(--magenta);
-  transition: width 0.3s ease;
-}
-
-.question {
-  background: white;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 13px;
-  border: 1px solid #eadfe5;
-}
-
-.question h3 {
-  font-size: 17px;
-  line-height: 1.5;
-  margin: 0 0 15px;
-}
-
-.option {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 13px;
-  margin: 8px 0;
-  border: 1px solid #e7dce2;
-  border-radius: 10px;
-  cursor: pointer;
-  line-height: 1.4;
-  font-size: 15px;
-}
-
-.option:has(input:checked) {
-  background: var(--light);
-  border-color: var(--magenta);
-}
-
-.option input {
-  accent-color: var(--magenta);
-  margin-top: 3px;
-  flex-shrink: 0;
-}
-
-.note {
-  color: #6b5a64;
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 10px;
-}
-
-.result {
-  display: none;
-  text-align: center;
-  background: white;
-  border: 2px solid var(--magenta);
-  border-radius: 18px;
-  padding: 35px 15px;
-  margin: 25px 0;
-}
-
-.result h2 {
-  color: var(--magenta);
-  font-size: 24px;
-  margin: 0 0 18px;
-}
-
-.score {
-  color: var(--magenta);
-  font-size: clamp(48px, 12vw, 76px);
-  font-weight: bold;
-}
-
-.restart {
-  margin-top: 22px;
-  border: none;
-  background: var(--magenta);
-  color: white;
-  padding: 13px 24px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.disclaimer {
-  text-align: center;
-  color: #776873;
-  font-size: 12px;
-  line-height: 1.5;
-  padding: 15px 8px;
-}
-
-@media (max-width: 480px) {
-  .header h1 {
-    font-size: 22px;
-  }
-
-  .question {
-    padding: 16px;
-  }
-
-  .question h3 {
-    font-size: 16px;
-  }
-}
+:root{--m:#AE275F;--p:#fff2f7;--ink:#302630;--muted:#766773;--line:#eadde4}
+*{box-sizing:border-box}body{margin:0;padding:14px;background:#f8f5f7;color:var(--ink);font-family:Arial,sans-serif}
+.wrap{max-width:680px;margin:auto}header{background:var(--m);color:white;text-align:center;padding:24px 16px;border-radius:17px}
+h1{font-size:clamp(22px,5vw,29px);margin:0;line-height:1.25}header p{font-size:14px;margin:9px 0 0}
+.track{height:8px;background:#e8dce3;border-radius:9px;overflow:hidden;margin:20px 0 8px}#bar{height:100%;width:0;background:var(--m);transition:width .2s}
+#step{text-align:center;font-size:13px;color:var(--muted);margin:0 0 15px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:21px}
+.tag{font-size:12px;font-weight:bold;letter-spacing:1px;color:var(--m)}h2{font-size:21px;line-height:1.4;margin:9px 0 12px}
+.note{font-size:14px;line-height:1.55;color:#655561;background:#fbf7f9;padding:12px;border-radius:10px;margin:0 0 15px}
+.opts{display:grid;gap:9px}.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;font-size:15px;line-height:1.4}
+.opt:has(input:checked){border-color:var(--m);background:var(--p)}.opt input{accent-color:var(--m);margin-top:3px}
+.calc{border:1px solid #e7c5d5;background:#fff8fb;padding:13px;border-radius:11px;margin:12px 0 15px}.calc h3{margin:0 0 10px;color:var(--m);font-size:16px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fields label{font-size:13px;color:var(--muted)}
+.fields input{width:100%;display:block;margin-top:6px;padding:11px;border:1px solid #d9cbd3;border-radius:8px;font-size:16px}
+#calcResult{font-size:14px;line-height:1.5;font-weight:bold;margin-top:10px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:18px}button{border:0;border-radius:10px;padding:13px 19px;font-weight:bold;font-size:15px;cursor:pointer}
+#back{background:#eee7ec;color:#4e414b}#next,#retake{background:var(--m);color:white;margin-left:auto}button:disabled{opacity:.45;cursor:not-allowed}
+.result{display:none;text-align:center;background:white;border:2px solid var(--m);border-radius:17px;padding:28px 14px;margin-top:18px}.result h2{color:var(--m);margin:0 0 14px}
+.score{font-size:clamp(48px,13vw,76px);font-weight:bold;color:var(--m)}footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;padding:18px 4px}
+@media(max-width:480px){body{padding:10px}.panel{padding:16px}.fields{grid-template-columns:1fr}}
 </style>
 </head>
-
-<body>
-<div class="container">
-
-  <header class="header">
-    <h1>DRALT HEALTH SCORE ASSESSMENT</h1>
-    <p>Understand your health through everyday habits and experiences</p>
-  </header>
-
-  <div class="progress-wrap">
-    <div class="progress" id="progress"></div>
-  </div>
-
-  <p id="progressText" style="text-align:center;font-size:14px;">
-    0 of 10 questions completed
-  </p>
-
-  <form id="assessment">
-
-    <div class="question">
-      <h3>1. Aapka pet saaf hone aur toilet jaane ka routine kaisa rehta hai?</h3>
-      <label class="option"><input type="radio" name="q1" value="0"> A. Aksar dikkat hoti hai</label>
-      <label class="option"><input type="radio" name="q1" value="3"> B. Kabhi theek, kabhi dikkat</label>
-      <label class="option"><input type="radio" name="q1" value="7"> C. Zyada tar theek</label>
-      <label class="option"><input type="radio" name="q1" value="10"> D. Regular aur bina dikkat</label>
-    </div>
-
-    <div class="question">
-      <h3>2. Aap roz apni jeebh aur munh ki safai kitni regularly karte hain?</h3>
-      <label class="option"><input type="radio" name="q2" value="0"> A. Bahut kam ya nahi</label>
-      <label class="option"><input type="radio" name="q2" value="3"> B. Kabhi-kabhi</label>
-      <label class="option"><input type="radio" name="q2" value="7"> C. Zyada tar din</label>
-      <label class="option"><input type="radio" name="q2" value="10"> D. Roz regularly</label>
-    </div>
-
-    <div class="question">
-      <h3>3. 1 minute halki jagah par walking ke baad aapki saans aur recovery kaisi rehti hai?</h3>
-      <label class="option"><input type="radio" name="q3" value="0"> A. Saans mein bahut dikkat / recovery mushkil</label>
-      <label class="option"><input type="radio" name="q3" value="3"> B. Kaafi discomfort</label>
-      <label class="option"><input type="radio" name="q3" value="7"> C. Halki dikkat, jaldi normal</label>
-      <label class="option"><input type="radio" name="q3" value="10"> D. Aaram se, saans jaldi normal</label>
-      <p class="note">Saans normal rakhein, rokein nahi. Agar exercise aapke liye unsafe ho ya discomfort ho, to ise skip karein aur healthcare professional se salah lein.</p>
-    </div>
-
-    <div class="question">
-      <h3>4. Aap hafte mein kitni regularly fruits khate hain?</h3>
-      <label class="option"><input type="radio" name="q4" value="0"> A. Bahut kam ya bilkul nahi</label>
-      <label class="option"><input type="radio" name="q4" value="3"> B. Kuch din</label>
-      <label class="option"><input type="radio" name="q4" value="7"> C. Aksar roz</label>
-      <label class="option"><input type="radio" name="q4" value="10"> D. Roz, apni zaroorat ke hisab se</label>
-    </div>
-
-    <div class="question">
-      <h3>5. Aap apne weight aur khane-peene ko lekar kitne satisfied hain?</h3>
-      <label class="option"><input type="radio" name="q5" value="0"> A. Bahut concern hai</label>
-      <label class="option"><input type="radio" name="q5" value="3"> B. Kuch concern hai</label>
-      <label class="option"><input type="radio" name="q5" value="7"> C. Mostly satisfied, thoda improve karna hai</label>
-      <label class="option"><input type="radio" name="q5" value="10"> D. Apni health needs ke hisab se satisfied</label>
-    </div>
-
-    <div class="question">
-      <h3>6. Neend ke baad subah aapki energy aur freshness kaisi hoti hai?</h3>
-      <label class="option"><input type="radio" name="q6" value="0"> A. Aksar thakan rehti hai</label>
-      <label class="option"><input type="radio" name="q6" value="3"> B. Kabhi fresh, kabhi tired</label>
-      <label class="option"><input type="radio" name="q6" value="7"> C. Mostly fresh</label>
-      <label class="option"><input type="radio" name="q6" value="10"> D. Usually achhi energy rehti hai</label>
-    </div>
-
-    <div class="question">
-      <h3>7. Aapki health ki pareshani aapke daily life ko kitna affect karti hai?</h3>
-      <label class="option"><input type="radio" name="q7" value="0"> A. Bahut zyada</label>
-      <label class="option"><input type="radio" name="q7" value="3"> B. Kaafi</label>
-      <label class="option"><input type="radio" name="q7" value="7"> C. Kabhi-kabhi</label>
-      <label class="option"><input type="radio" name="q7" value="10"> D. Koi significant pareshani nahi</label>
-    </div>
-
-    <div class="question">
-      <h3>8. Chalne, baithne, khade hone aur daily kaam karne mein aapko kaisa lagta hai?</h3>
-      <label class="option"><input type="radio" name="q8" value="0"> A. Aksar dikkat hoti hai</label>
-      <label class="option"><input type="radio" name="q8" value="3"> B. Kuch activities mein dikkat hoti hai</label>
-      <label class="option"><input type="radio" name="q8" value="7"> C. Mostly comfortable</label>
-      <label class="option"><input type="radio" name="q8" value="10"> D. Daily activities aasani se hoti hain</label>
-    </div>
-
-    <div class="question">
-      <h3>9. Mausam ya routine badalne par adjust karne mein kaisa lagta hai?</h3>
-      <label class="option"><input type="radio" name="q9" value="0"> A. Aksar dikkat hoti hai</label>
-      <label class="option"><input type="radio" name="q9" value="3"> B. Kabhi-kabhi dikkat hoti hai</label>
-      <label class="option"><input type="radio" name="q9" value="7"> C. Mostly adjust kar leta/leti hoon</label>
-      <label class="option"><input type="radio" name="q9" value="10"> D. Aasani se adjust kar leta/leti hoon</label>
-    </div>
-
-    <div class="question">
-      <h3>10. Daily movements mein apna balance aur stability kaisa mehsoos karte hain?</h3>
-      <label class="option"><input type="radio" name="q10" value="0"> A. Aksar unstable mehsoos hota hai</label>
-      <label class="option"><input type="radio" name="q10" value="3"> B. Kabhi-kabhi issue hota hai</label>
-      <label class="option"><input type="radio" name="q10" value="7"> C. Mostly stable</label>
-      <label class="option"><input type="radio" name="q10" value="10"> D. Usual movements mein stable</label>
-    </div>
-
-  </form>
-
-  <div class="result" id="result">
-    <h2>YOUR DRALT HEALTH SCORE</h2>
-    <div class="score"><span id="scoreValue">0</span> / 100</div>
-    <button class="restart" onclick="restartAssessment()">Retake Assessment</button>
-  </div>
-
-  <div class="disclaimer">
-    This assessment is for general health awareness and self-reflection only.
-    It is not a medical diagnosis or a substitute for professional medical advice.
-  </div>
-
+<body><div class="wrap">
+<header><h1>DRALT HEALTH SCORE ASSESSMENT</h1><p>10 questions • 5 real-life self-tests • Know your score</p></header>
+<div class="track"><div id="bar"></div></div><p id="step">Question 1 of 10</p>
+<main id="panel" class="panel"></main>
+<div class="nav" id="nav"><button id="back" disabled>← Back</button><button id="next" disabled>Next →</button></div>
+<section class="result" id="result"><h2>YOUR DRALT HEALTH SCORE</h2><div class="score"><span id="score">0</span> / 100</div><button id="retake">Retake Assessment</button></section>
+<footer>This assessment is for general health awareness and self-reflection only. It is not a medical diagnosis or a validated clinical score, and it does not replace professional medical advice. Stop any test if you feel pain, dizziness, breathlessness, or unsteadiness. Skip tests that are not safe for you.</footer>
 </div>
-
 <script>
-const form = document.getElementById("assessment");
-const progress = document.getElementById("progress");
-const progressText = document.getElementById("progressText");
-const result = document.getElementById("result");
-const scoreValue = document.getElementById("scoreValue");
-
-form.addEventListener("change", function () {
-  let completed = 0;
-  let totalScore = 0;
-
-  for (let i = 1; i <= 10; i++) {
-    const answer = form.querySelector('input[name="q' + i + '"]:checked');
-
-    if (answer) {
-      completed++;
-      totalScore += Number(answer.value);
-    }
-  }
-
-  progress.style.width = (completed * 10) + "%";
-  progressText.textContent = completed + " of 10 questions completed";
-
-  if (completed === 10) {
-    scoreValue.textContent = totalScore;
-    result.style.display = "block";
-    result.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else {
-    result.style.display = "none";
-  }
-});
-
-function restartAssessment() {
-  form.reset();
-  result.style.display = "none";
-  progress.style.width = "0%";
-  progressText.textContent = "0 of 10 questions completed";
-  window.scrollTo({ top: 0, behavior: "smooth" });
+const Q=[
+["How consistent and comfortable is your daily bowel routine?","Think about your usual bowel routine and comfort.",["Often irregular, difficult, or uncomfortable","Usually some difficulty","Sometimes comfortable, sometimes difficult","Mostly regular and comfortable","Consistently regular and comfortable"]],
+["Detox Score — Real Self-Test: Tongue Coating Examination","In natural light, look at your tongue in a mirror before brushing or scraping. Tongue coating can have many causes; this is only an observation and does not measure toxins or diagnose illness.",["Thick coating over much of the tongue or persistent unusual appearance","Noticeable coating over a large area","Moderate coating in some areas","Light coating; mostly clear tongue","Mostly clear tongue with no persistent unusual coating"]],
+["How frequently and in what quantity do you consume fresh whole fruits?","Consider your usual whole-fruit intake across the week. Fruit juice is not counted as whole fruit.",["Rarely or almost never","Small amount on 1–2 days per week","Moderate amount on 3–4 days per week","Whole fruit on most days","Suitable variety and amount of whole fruit most days"]],
+["Respiration Score — 1-minute walking test","Only if safe: walk gently for 1 minute, rest 30 seconds, then count breaths for a full 60 seconds (one breath = inhale + exhale). Do not hold your breath or walk fast. Skip if you have symptoms, mobility limitations, or have been advised against exercise. This is not a diagnostic test.",["Could not safely do the walk / concerning symptoms","Breathing very uncomfortable or did not settle","Breathing noticeably elevated but gradually settled","Breathing mildly elevated and settled comfortably","Breathing comfortable and settled easily"]],
+["Energy & Sleep Score","Reflect on how often you feel adequately rested after sleep and have comfortable energy during the day.",["Rarely rested; low energy most days","Rested and energetic only occasionally","Some days rested, other days tired","Usually rested with good daytime energy","Consistently rested and energetic"]],
+["Weight Score — Healthy Body Weight","Use the calculator for an approximate adult BMI-based range. BMI is a rough screening measure, not an individualized ideal weight.",["Weight substantially outside the displayed range","Weight noticeably outside the displayed range","Weight slightly outside the displayed range","Weight within range, near one boundary","Weight within range and feels appropriate for me"]],
+["Disease & Medicine Freedom Score","Consider the burden of ongoing health conditions and daily medicine needs. Do not stop, reduce, or change prescribed medication based on this assessment.",["Conditions strongly affect daily life; frequent treatment needs","Significant condition burden or multiple daily medicines","Some condition burden or regular medicine needs","Conditions generally well managed with limited impact","No significant ongoing condition burden or daily medicine needs"]],
+["Real Test — Shoulder or Knee Flexibility","Choose ONE gentle test. Shoulder: slowly reach one hand over shoulder and the other behind back. Knee: gently bend and straighten while seated. Do not force; stop for pain. Skip if unsuitable.",["Very limited movement or unable to perform comfortably","Marked restriction or discomfort","Moderate limitation","Near-full comfortable movement with slight limitation","Full or near-full comfortable movement without pain"]],
+["Tolerance for Sun, Weather Changes, and Getting Wet in Rain","Reflect on usual tolerance. Do not deliberately expose yourself to heat, cold, or rain to test this.",["Often unwell or struggle significantly with ordinary changes","Frequently uncomfortable with weather or temperature changes","Sometimes uncomfortable; usually adapt","Generally tolerate usual changes comfortably","Usually adapt comfortably to normal weather changes"]],
+["Real Test — Balance & Stability","Only if safe: stand near a sturdy counter/support, feet together, eyes open, up to 10 seconds. Keep support within reach. Do not close eyes or stand on one leg. Skip if falls risk, dizziness, or unsteadiness.",["Unable to safely attempt or felt very unstable","Needed firm support or could not maintain briefly","Maintained briefly but needed light support/felt unsteady","Maintained up to 10 seconds with slight sway, no support","Maintained 10 seconds comfortably and steadily"]]
+];
+const scores=[0,2.5,5,7.5,10], answers={};let n=0;
+const panel=document.getElementById("panel"),back=document.getElementById("back"),next=document.getElementById("next");
+function render(){
+ const q=Q[n],real=[1,3,7,9].includes(n),tag=real?"REAL SELF-TEST":n===5?"CALCULATOR INCLUDED":"HEALTH REFLECTION";
+ document.getElementById("step").textContent=`Question ${n+1} of 10`;document.getElementById("bar").style.width=(n*10)+"%";
+ panel.innerHTML=`<div class="tag">QUESTION ${n+1} • ${tag}</div><h2>${q[0]}</h2><p class="note">${q[1]}</p>`;
+ if(n===5)panel.innerHTML+=`<div class="calc"><h3>Approximate Ideal Weight Calculator</h3><div class="fields"><label>Height (cm)<input id="height" type="number" min="100" max="250" placeholder="e.g. 170"></label><label>Current weight (kg)<input id="weight" type="number" min="20" max="300" step=".1" placeholder="e.g. 65"></label></div><div id="calcResult">Enter height and weight to calculate an approximate range.</div></div>`;
+ const opts=document.createElement("div");opts.className="opts";
+ q[2].forEach((txt,i)=>{let l=document.createElement("label");l.className="opt";l.innerHTML=`<input type="radio" name="a" value="${scores[i]}" ${answers[n]===scores[i]?"checked":""}><span>${"ABCDE"[i]}. ${txt}</span>`;opts.appendChild(l)});
+ panel.appendChild(opts);panel.querySelectorAll('input[name="a"]').forEach(x=>x.addEventListener("change",()=>{answers[n]=Number(x.value);next.disabled=false}));
+ if(n===5){const h=panel.querySelector("#height"),w=panel.querySelector("#weight"),o=panel.querySelector("#calcResult");function calc(){let H=+h.value,W=+w.value;if(H>=100&&H<=250&&W>=20&&W<=300){let m=H/100;o.textContent=`BMI: ${(W/(m*m)).toFixed(1)} • Approx. adult BMI-based weight range: ${(18.5*m*m).toFixed(1)}–${(24.9*m*m).toFixed(1)} kg.`}else o.textContent="Enter valid height (100–250 cm) and weight (20–300 kg)."}h.addEventListener("input",calc);w.addEventListener("input",calc)}
+ back.disabled=n===0;next.textContent=n===9?"See My Score →":"Next →";next.disabled=answers[n]===undefined;
 }
-</script>
-
-</body>
-</html>
+back.onclick=()=>{if(n>0){n--;render()}};
+next.onclick=()=>{if(answers[n]===undefined)return;if(n<9){n++;render();window.scrollTo({top:0,behavior:"smooth"})}else{let total=Object.values(answers).reduce((a,b)=>a+b,0);document.getElementById("score").textContent=total;panel.style.display="none";document.getElementById("nav").style.display="none";document.getElementById("step").style.display="none";document.getElementById("bar").style.width="100%";document.getElementById("result").style.display="block";document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"})}};
+document.getElementById("retake").onclick=()=>{n=0;Object.keys(answers).forEach(k=>delete answers[k]);panel.style.display="block";document.getElementById("nav").style.display="flex";document.getElementById("step").style.display="block";document.getElementById("result").style.display="none";render();window.scrollTo({top:0,behavior:"smooth"})};
+render();
+</script></body></html>
