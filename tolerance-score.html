@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALT Tolerance Health Score</title>
+<style>
+  :root {
+    --brand: #ae275f;
+    --brand-dark: #861b48;
+    --brand-light: #fff1f6;
+    --text: #24212a;
+    --muted: #5f5965;
+    --border: #e8dce2;
+    --surface: #ffffff;
+    --page: #fff8fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: Arial, "Noto Sans Devanagari", "Mangal", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .wrap {
+    width: min(100% - 28px, 850px);
+    margin: 0 auto;
+    padding: 24px 0 40px;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: white;
+    padding: 28px 22px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(27px, 5vw, 36px);
+    line-height: 1.25;
+    font-weight: 800;
+  }
+  .header .subtitle {
+    font-size: clamp(18px, 3.5vw, 22px);
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .header .meta {
+    font-size: 17px;
+    margin: 10px 0 0;
+    opacity: .96;
+  }
+  .intro, .question, .result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(105, 35, 65, .045);
+  }
+  .intro p { margin: 0 0 8px; font-size: 18px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .q-heading {
+    color: var(--brand);
+    font-size: clamp(21px, 4vw, 25px);
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 0 0 12px;
+  }
+  .q-en {
+    font-size: clamp(19px, 3.6vw, 21px);
+    font-weight: 700;
+    line-height: 1.55;
+    margin: 0 0 9px;
+  }
+  .q-hi {
+    font-size: clamp(18px, 3.4vw, 20px);
+    line-height: 1.7;
+    margin: 0 0 18px;
+    color: #39333e;
+  }
+  .options { display: grid; gap: 11px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1.5px solid #e5d8df;
+    background: #fff;
+    border-radius: 12px;
+    padding: 13px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .option:hover { border-color: var(--brand); background: #fff9fc; }
+  .option.selected { border-color: var(--brand); background: var(--brand-light); }
+  .option input {
+    flex: 0 0 auto;
+    margin-top: 6px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--brand);
+  }
+  .option-text {
+    font-size: clamp(17px, 3.3vw, 19px);
+    line-height: 1.55;
+  }
+  .option-hi {
+    display: block;
+    margin-top: 4px;
+    color: #4c4550;
+    font-size: clamp(16px, 3.2vw, 18px);
+    line-height: 1.65;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 24px 0; }
+  button {
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 24px;
+    min-height: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .primary { background: var(--brand); color: white; }
+  .primary:hover { background: var(--brand-dark); }
+  .secondary { background: #f0e7ec; color: #3c2933; }
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 9px 0;
+    background: rgba(255,248,251,.95);
+    backdrop-filter: blur(5px);
+    margin-bottom: 14px;
+  }
+  .progress-track { height: 8px; background: #eadde4; border-radius: 20px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0; background: var(--brand); transition: width .2s; }
+  .progress-label { text-align: center; font-size: 16px; font-weight: 700; color: var(--muted); margin-top: 5px; }
+  .result { text-align: center; display: none; }
+  .score { font-size: clamp(42px, 9vw, 60px); font-weight: 900; color: var(--brand); line-height: 1.2; margin: 10px 0; }
+  .level { font-size: 25px; font-weight: 800; margin: 8px 0; }
+  .result p { font-size: 18px; line-height: 1.65; }
+  .notice { color: var(--muted); font-size: 16px !important; }
+  .scale { margin: 18px auto 0; max-width: 520px; text-align: left; border-collapse: collapse; width: 100%; font-size: 17px; }
+  .scale th, .scale td { border: 1px solid var(--border); padding: 9px 11px; }
+  .scale th { background: var(--brand-light); }
+  .error { display:none; color:#a01940; text-align:center; font-weight:700; font-size:18px; margin:10px 0; }
+  @media (max-width: 520px) {
+    .wrap { width: min(100% - 18px, 850px); padding-top: 12px; }
+    .header { padding: 23px 15px; border-radius: 15px; }
+    .intro, .question, .result { padding: 17px 15px; }
+    .option { padding: 12px 11px; gap: 10px; }
+    body { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <h1>DRALT Tolerance Health Score</h1>
+    <div class="subtitle">Physical Tolerance &amp; Immunity</div>
+    <div class="subtitle">शारीरिक सहनशीलता और रोग-प्रतिरोधक क्षमता</div>
+    <p class="meta">10 Questions · Maximum Score: 100</p>
+  </header>
+
+  <section class="intro">
+    <p><strong>Instructions:</strong> Select one answer that best describes your usual experience for each question.</p>
+    <p><strong>निर्देश:</strong> हर प्रश्न के लिए वह एक उत्तर चुनें जो आपके सामान्य अनुभव को सबसे अच्छी तरह दर्शाता है।</p>
+    <p>Each question carries up to 10 marks. Answer options are displayed without marks.</p>
+    <p>हर प्रश्न के अधिकतम 10 अंक हैं। उत्तर विकल्पों में अंक नहीं दिखाए गए हैं।</p>
+  </section>
+
+  <div class="progress" aria-live="polite">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0 of 10 answered</div>
+  </div>
+
+  <form id="assessment">
+    <div id="questions"></div>
+    <div class="error" id="error">Please answer all 10 questions before viewing your score.<br>कृपया स्कोर देखने से पहले सभी 10 प्रश्नों के उत्तर दें।</div>
+    <div class="actions">
+      <button type="submit" class="primary">View My Score · मेरा स्कोर देखें</button>
+    </div>
+  </form>
+
+  <section class="result" id="result" aria-live="polite">
+    <h2 class="q-heading">Your DRALT Tolerance Health Score</h2>
+    <div class="score" id="score"></div>
+    <div class="level" id="level"></div>
+    <p id="resultText"></p>
+    <table class="scale">
+      <thead><tr><th>Score</th><th>Assessment Level</th></tr></thead>
+      <tbody>
+        <tr><td>20–39</td><td>Very Low Tolerance</td></tr>
+        <tr><td>40–59</td><td>Low Tolerance</td></tr>
+        <tr><td>60–79</td><td>Moderate Tolerance</td></tr>
+        <tr><td>80–89</td><td>High Tolerance</td></tr>
+        <tr><td>90–100</td><td>Excellent Tolerance</td></tr>
+      </tbody>
+    </table>
+    <p class="notice">This is a self-assessment of perceived tolerance, not a medical diagnosis or a clinical immunity test. Do not intentionally expose yourself to infections, excessive sun, rain, or exertion to test your score. Do not stop or change prescribed medicines based on this result.</p>
+    <p class="notice">यह स्वयं के अनुभव पर आधारित आकलन है, चिकित्सा निदान या क्लिनिकल इम्युनिटी टेस्ट नहीं। स्कोर जाँचने के लिए जानबूझकर संक्रमण, अत्यधिक धूप, बारिश या मेहनत के संपर्क में न आएँ।</p>
+    <div class="actions">
+      <button type="button" class="secondary" id="restart">Restart Assessment · दोबारा शुरू करें</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const questions = [
+  {
+    heading: "Q1. Weather Change Tolerance — मौसम बदलाव सहनशीलता",
+    en: "How comfortably does your body adapt to changes in weather, such as sudden changes in temperature?",
+    hi: "मौसम में बदलाव, जैसे अचानक तापमान बदलने पर, आपका शरीर कितनी सहजता से अनुकूल होता है?",
+    options: [
+      ["My body is highly sensitive to weather changes.", "मौसम बदलने पर मेरे शरीर को बहुत परेशानी होती है।"],
+      ["I often experience discomfort.", "मुझे अक्सर परेशानी होती है।"],
+      ["I sometimes experience discomfort.", "मुझे कभी-कभी परेशानी होती है।"],
+      ["I usually adapt comfortably.", "मेरा शरीर सामान्यतः सहजता से अनुकूल हो जाता है।"],
+      ["My body adapts comfortably to all usual weather changes.", "मेरा शरीर मौसम के सामान्य बदलावों को सहजता से सहन करता है।"]
+    ]
+  },
+  {
+    heading: "Q2. Sun Exposure Tolerance — धूप सहनशीलता",
+    en: "How comfortably can your body tolerate exposure to sunlight during your usual outdoor activities?",
+    hi: "सामान्य बाहरी गतिविधियों के दौरान आपका शरीर धूप को कितनी सहजता से सहन कर पाता है?",
+    options: [
+      ["I experience significant discomfort even with brief sun exposure.", "थोड़ी देर धूप में रहने पर भी बहुत परेशानी होती है।"],
+      ["I experience discomfort with short sun exposure.", "थोड़ी देर धूप में रहने पर परेशानी होती है।"],
+      ["I tolerate moderate sun exposure with some discomfort.", "मध्यम धूप सहन कर लेता/लेती हूँ, लेकिन थोड़ी परेशानी होती है।"],
+      ["I tolerate usual sun exposure comfortably.", "सामान्य धूप सहजता से सहन कर लेता/लेती हूँ।"],
+      ["I tolerate usual sun exposure comfortably without unusual symptoms.", "सामान्य धूप सहजता से सहन करता/करती हूँ, बिना किसी असामान्य परेशानी के।"]
+    ]
+  },
+  {
+    heading: "Q3. Rain Wetting Tolerance — बारिश में भीगने की सहनशीलता",
+    en: "How well does your body tolerate getting wet in the rain?",
+    hi: "बारिश में भीगने पर आपका शरीर कितनी अच्छी तरह सहन कर पाता है?",
+    options: [
+      ["I frequently develop health problems after getting wet.", "बारिश में भीगने के बाद अक्सर स्वास्थ्य समस्या होती है।"],
+      ["I often experience discomfort after getting wet.", "भीगने के बाद अक्सर परेशानी होती है।"],
+      ["I sometimes experience discomfort.", "कभी-कभी परेशानी होती है।"],
+      ["I usually tolerate getting wet without any significant discomfort.", "सामान्यतः भीगने पर कोई विशेष परेशानी नहीं होती।"],
+      ["I always enjoy and tolerate getting wet comfortably without experiencing any symptoms.", "मैं बारिश में भीगने का हमेशा आनंद लेता/लेती हूँ और बिना किसी लक्षण के इसे सहजता से सहन करता/करती हूँ।"]
+    ]
+  },
+  {
+    heading: "Q4. Strong Immunity — संक्रमण से सुरक्षा क्षमता",
+    en: "How often do you remain free from infection when an infection is spreading around you and others are getting infected?",
+    hi: "जब आसपास संक्रमण फैल रहा हो और दूसरे लोग संक्रमित हो रहे हों, तब आप कितनी बार संक्रमण से सुरक्षित रहते हैं?",
+    options: [
+      ["I frequently get infected.", "मैं अक्सर संक्रमित हो जाता/जाती हूँ।"],
+      ["I get infected quite often.", "मैं काफी बार संक्रमित हो जाता/जाती हूँ।"],
+      ["I sometimes get infected.", "मैं कभी-कभी संक्रमित होता/होती हूँ।"],
+      ["I usually remain free from infection.", "मैं सामान्यतः संक्रमण से सुरक्षित रहता/रहती हूँ।"],
+      ["I consistently remain free from infection even when others around me get infected.", "आसपास के लोग संक्रमित होने पर भी मैं लगातार संक्रमण से सुरक्षित रहता/रहती हूँ।"]
+    ]
+  },
+  {
+    heading: "Q5. Sleep Tolerance — नींद की कमी सहनशीलता",
+    en: "How well does your body function even after an occasional poor night's sleep?",
+    hi: "कभी-कभी रात में अच्छी नींद न होने के बावजूद आपका शरीर कितनी अच्छी तरह कार्य करता है?",
+    options: [
+      ["I feel severely disturbed and unable to function normally.", "बहुत परेशानी होती है और सामान्य रूप से काम नहीं कर पाता/पाती हूँ।"],
+      ["I feel very tired and my functioning is significantly affected.", "बहुत थकान होती है और कार्यक्षमता काफी प्रभावित होती है।"],
+      ["I experience some tiredness, but manage my routine.", "थोड़ी थकान होती है, लेकिन दिनचर्या संभाल लेता/लेती हूँ।"],
+      ["I function comfortably with minimal disturbance.", "बहुत कम परेशानी के साथ सहजता से काम करता/करती हूँ।"],
+      ["My body functions almost normally without noticeable disturbance.", "मेरा शरीर लगभग सामान्य रूप से कार्य करता है, बिना विशेष परेशानी के।"]
+    ]
+  },
+  {
+    heading: "Q6. Travel Tolerance — यात्रा सहनशीलता",
+    en: "How comfortably does your body adapt while travelling?",
+    hi: "यात्रा के दौरान आपका शरीर कितनी सहजता से अनुकूल होता है?",
+    options: [
+      ["I experience significant discomfort during most journeys.", "अधिकतर यात्राओं में बहुत परेशानी होती है।"],
+      ["I often experience travel-related discomfort.", "यात्रा के दौरान अक्सर परेशानी होती है।"],
+      ["I sometimes experience discomfort, but manage the journey.", "कभी-कभी परेशानी होती है, लेकिन यात्रा संभाल लेता/लेती हूँ।"],
+      ["I usually travel comfortably with minimal discomfort.", "सामान्यतः बहुत कम परेशानी के साथ यात्रा करता/करती हूँ।"],
+      ["I adapt comfortably to different journeys without unusual discomfort.", "विभिन्न यात्राओं में बिना असामान्य परेशानी के सहज रहता/रहती हूँ।"]
+    ]
+  },
+  {
+    heading: "Q7. Digestion Tolerance — कच्चे स्वस्थ खाद्य पदार्थों की सहनशीलता",
+    en: "How well does your body tolerate healthy raw foods like fruits, salads, and green edible leaves?",
+    hi: "फल, सलाद और हरी खाने योग्य पत्तियों जैसे स्वस्थ कच्चे खाद्य पदार्थों को आपका शरीर कितनी अच्छी तरह सहन करता है?",
+    options: [
+      ["I experience significant digestive discomfort with most raw foods.", "अधिकतर कच्चे खाद्य पदार्थों से बहुत पाचन संबंधी परेशानी होती है।"],
+      ["I experience frequent digestive discomfort.", "अक्सर पाचन संबंधी परेशानी होती है।"],
+      ["I tolerate some raw foods, but experience occasional discomfort.", "कुछ कच्चे खाद्य पदार्थ सहन होते हैं, लेकिन कभी-कभी परेशानी होती है।"],
+      ["I tolerate most raw foods comfortably.", "अधिकतर कच्चे खाद्य पदार्थ सहजता से सहन होते हैं।"],
+      ["I comfortably tolerate fruits, salads, and green edible leaves without digestive or other discomfort.", "मैं फल, सलाद और हरी खाने योग्य पत्तियों को बिना किसी पाचन या अन्य परेशानी के सहजता से सहन करता/करती हूँ।"]
+    ]
+  },
+  {
+    heading: "Q8. Stress Tolerance — तनाव का शारीरिक प्रभाव",
+    en: "How well can you handle mental stress without affecting your health?",
+    hi: "मानसिक तनाव को आप कितनी अच्छी तरह संभाल पाते हैं, बिना अपने स्वास्थ्य को प्रभावित किए?",
+    options: [
+      ["Stress frequently affects my health significantly.", "तनाव अक्सर मेरे स्वास्थ्य को काफी प्रभावित करता है।"],
+      ["Stress often affects my health.", "तनाव अक्सर मेरे स्वास्थ्य को प्रभावित करता है।"],
+      ["Stress sometimes affects my health.", "तनाव कभी-कभी मेरे स्वास्थ्य को प्रभावित करता है।"],
+      ["I handle stress well, with minimal health impact.", "तनाव अच्छी तरह संभालता/संभालती हूँ, स्वास्थ्य पर बहुत कम प्रभाव पड़ता है।"],
+      ["I handle stress comfortably without noticeable health impact.", "तनाव सहजता से संभालता/संभालती हूँ, स्वास्थ्य पर कोई विशेष प्रभाव नहीं पड़ता।"]
+    ]
+  },
+  {
+    heading: "Q9. Allergy Tolerance — एलर्जी से मुक्ति",
+    en: "How free are you from allergic reactions to common triggers such as dust, pollen, or certain foods?",
+    hi: "धूल, परागकण या कुछ खाद्य पदार्थों जैसे सामान्य एलर्जी ट्रिगर्स से होने वाली प्रतिक्रियाओं से आप कितने मुक्त हैं?",
+    options: [
+      ["I experience frequent and significant allergic reactions.", "अक्सर और काफी गंभीर एलर्जी प्रतिक्रियाएँ होती हैं।"],
+      ["I experience frequent allergic reactions.", "अक्सर एलर्जी प्रतिक्रियाएँ होती हैं।"],
+      ["I experience occasional allergic reactions.", "कभी-कभी एलर्जी प्रतिक्रियाएँ होती हैं।"],
+      ["I rarely experience allergic reactions.", "बहुत कम एलर्जी प्रतिक्रियाएँ होती हैं।"],
+      ["I remain free from noticeable allergic reactions to my usual environmental exposures.", "सामान्य पर्यावरणीय संपर्कों से कोई विशेष एलर्जी प्रतिक्रिया नहीं होती।"]
+    ]
+  },
+  {
+    heading: "Q10. Exertion Tolerance — शारीरिक मेहनत सहनशीलता",
+    en: "How well does your body tolerate physical exertion without unusual fatigue or discomfort?",
+    hi: "शारीरिक मेहनत के दौरान आपका शरीर असामान्य थकान या परेशानी के बिना कितनी अच्छी तरह सहन करता है?",
+    options: [
+      ["I experience significant fatigue or discomfort even with light exertion.", "हल्की मेहनत में भी बहुत थकान या परेशानी होती है।"],
+      ["I struggle with moderate physical exertion.", "मध्यम शारीरिक मेहनत में कठिनाई होती है।"],
+      ["I manage moderate exertion, but experience some fatigue.", "मध्यम मेहनत संभाल लेता/लेती हूँ, लेकिन कुछ थकान होती है।"],
+      ["I tolerate most usual physical activities comfortably.", "अधिकतर सामान्य शारीरिक गतिविधियाँ सहजता से सहन करता/करती हूँ।"],
+      ["I tolerate demanding physical activities comfortably without unusual fatigue or discomfort.", "कठिन शारीरिक गतिविधियाँ भी बिना असामान्य थकान या परेशानी के सहन करता/करती हूँ।"]
+    ]
+  }
+];
+
+const scoreValues = [2, 4, 6, 8, 10];
+const questionContainer = document.getElementById("questions");
+
+questions.forEach((q, index) => {
+  const section = document.createElement("section");
+  section.className = "question";
+  section.innerHTML = `
+    <h2 class="q-heading">${q.heading}</h2>
+    <p class="q-en">${q.en}</p>
+    <p class="q-hi">${q.hi}</p>
+    <div class="options" role="radiogroup" aria-label="${q.heading}">
+      ${q.options.map((option, optIndex) => `
+        <label class="option">
+          <input type="radio" name="q${index}" value="${scoreValues[optIndex]}" required>
+          <span class="option-text">${option[0]}<span class="option-hi">${option[1]}</span></span>
+        </label>
+      `).join("")}
+    </div>
+  `;
+  questionContainer.appendChild(section);
+});
+
+function updateProgress() {
+  const answered = questions.reduce((count, q, i) =>
+    count + (document.querySelector(`input[name="q${i}"]:checked`) ? 1 : 0), 0);
+  document.getElementById("progressBar").style.width = `${answered * 10}%`;
+  document.getElementById("progressLabel").textContent = `${answered} of 10 answered · ${answered} में से 10 उत्तर`;
+}
+document.querySelectorAll('input[type="radio"]').forEach(input => {
+  input.addEventListener("change", () => {
+    document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
+      radio.closest(".option").classList.toggle("selected", radio.checked);
+    });
+    updateProgress();
+    document.getElementById("error").style.display = "none";
+  });
+});
+
+document.getElementById("assessment").addEventListener("submit", event => {
+  event.preventDefault();
+  const answers = questions.map((q, i) => document.querySelector(`input[name="q${i}"]:checked`));
+  if (answers.some(answer => !answer)) {
+    document.getElementById("error").style.display = "block";
+    const firstMissing = answers.findIndex(answer => !answer);
+    document.querySelectorAll(".question")[firstMissing].scrollIntoView({behavior: "smooth", block: "center"});
+    return;
+  }
+  const total = answers.reduce((sum, answer) => sum + Number(answer.value), 0);
+  let level, message;
+  if (total <= 39) {
+    level = "Very Low Tolerance";
+    message = "Your responses indicate that you experience significant challenges with physical tolerance. Consider discussing recurring symptoms with a qualified healthcare professional.";
+  } else if (total <= 59) {
+    level = "Low Tolerance";
+    message = "Your responses indicate that several areas of physical tolerance may be challenging for you.";
+  } else if (total <= 79) {
+    level = "Moderate Tolerance";
+    message = "Your responses indicate a moderate level of perceived physical tolerance.";
+  } else if (total <= 89) {
+    level = "High Tolerance";
+    message = "Your responses indicate a high level of perceived physical tolerance.";
+  } else {
+    level = "Excellent Tolerance";
+    message = "Your responses indicate an excellent level of perceived physical tolerance across these self-assessed areas.";
+  }
+  document.getElementById("score").textContent = `${total} / 100`;
+  document.getElementById("level").textContent = level;
+  document.getElementById("resultText").textContent = message;
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({behavior: "smooth", block: "start"});
+});
+
+document.getElementById("restart").addEventListener("click", () => {
+  document.getElementById("assessment").reset();
+  document.querySelectorAll(".option").forEach(option => option.classList.remove("selected"));
+  document.getElementById("result").style.display = "none";
+  document.getElementById("error").style.display = "none";
+  updateProgress();
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+</script>
+</body>
+</html>
