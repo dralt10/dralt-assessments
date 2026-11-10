@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en-hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALT Health Score Test | Masterclass</title>
+<style>
+
+  :root {
+    --brand: #ae275f;
+    --brand-dark: #861b48;
+    --brand-light: #fff1f6;
+    --text: #24212a;
+    --muted: #5f5965;
+    --border: #e8dce2;
+    --surface: #ffffff;
+    --page: #fff8fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: Arial, "Noto Sans Devanagari", "Mangal", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .wrap {
+    width: min(100% - 28px, 850px);
+    margin: 0 auto;
+    padding: 24px 0 40px;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: white;
+    padding: 28px 22px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(27px, 5vw, 36px);
+    line-height: 1.25;
+    font-weight: 800;
+  }
+  .header .subtitle {
+    font-size: clamp(18px, 3.5vw, 22px);
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .header .meta {
+    font-size: 17px;
+    margin: 10px 0 0;
+    opacity: .96;
+  }
+  .intro, .question, .result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(105, 35, 65, .045);
+  }
+  .intro p { margin: 0 0 8px; font-size: 18px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .q-heading {
+    color: var(--brand);
+    font-size: clamp(21px, 4vw, 25px);
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 0 0 12px;
+  }
+  .q-en {
+    font-size: clamp(19px, 3.6vw, 21px);
+    font-weight: 700;
+    line-height: 1.55;
+    margin: 0 0 9px;
+  }
+  .q-hi {
+    font-size: clamp(18px, 3.4vw, 20px);
+    line-height: 1.7;
+    margin: 0 0 18px;
+    color: #39333e;
+  }
+  .options { display: grid; gap: 11px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1.5px solid #e5d8df;
+    background: #fff;
+    border-radius: 12px;
+    padding: 13px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .option:hover { border-color: var(--brand); background: #fff9fc; }
+  .option.selected { border-color: var(--brand); background: var(--brand-light); }
+  .option input {
+    flex: 0 0 auto;
+    margin-top: 6px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--brand);
+  }
+  .option-text {
+    font-size: clamp(17px, 3.3vw, 19px);
+    line-height: 1.55;
+  }
+  .option-hi {
+    display: block;
+    margin-top: 4px;
+    color: #4c4550;
+    font-size: clamp(16px, 3.2vw, 18px);
+    line-height: 1.65;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 24px 0; }
+  button {
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 24px;
+    min-height: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .primary { background: var(--brand); color: white; }
+  .primary:hover { background: var(--brand-dark); }
+  .secondary { background: #f0e7ec; color: #3c2933; }
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 9px 0;
+    background: rgba(255,248,251,.95);
+    backdrop-filter: blur(5px);
+    margin-bottom: 14px;
+  }
+  .progress-track { height: 8px; background: #eadde4; border-radius: 20px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0; background: var(--brand); transition: width .2s; }
+  .progress-label { text-align: center; font-size: 16px; font-weight: 700; color: var(--muted); margin-top: 5px; }
+  .result { text-align: center; display: none; }
+  .score { font-size: clamp(42px, 9vw, 60px); font-weight: 900; color: var(--brand); line-height: 1.2; margin: 10px 0; }
+  .level { font-size: 25px; font-weight: 800; margin: 8px 0; }
+  .result p { font-size: 18px; line-height: 1.65; }
+  .notice { color: var(--muted); font-size: 16px !important; }
+  .scale { margin: 18px auto 0; max-width: 520px; text-align: left; border-collapse: collapse; width: 100%; font-size: 17px; }
+  .scale th, .scale td { border: 1px solid var(--border); padding: 9px 11px; }
+  .scale th { background: var(--brand-light); }
+  .calc { background:#f8f5f7; border:1px solid var(--border); padding:16px; border-radius:12px; margin:16px 0; }
+  .calc h3 { margin:0 0 12px; font-size:19px; line-height:1.45; }
+  .calcgrid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .calc label { display:block; font-size:17px; color:var(--muted); margin-bottom:6px; }
+  .calc input, .calc select { width:100%; padding:12px; border:1px solid #d8cbd2; border-radius:8px; font-size:18px; font-family:inherit; margin-bottom:8px; }
+  .calcresult { font-size:18px; line-height:1.6; margin-top:10px; color:var(--brand); font-weight:700; }
+  .error { display:none; color:#a01940; text-align:center; font-weight:700; font-size:18px; margin:10px 0; }
+  @media (max-width: 520px) {
+    .calcgrid { grid-template-columns:1fr; }
+    .wrap { width: min(100% - 18px, 850px); padding-top: 12px; }
+    .header { padding: 23px 15px; border-radius: 15px; }
+    .intro, .question, .result { padding: 17px 15px; }
+    .option { padding: 12px 11px; gap: 10px; }
+    body { font-size: 17px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <h1>DRALT Health Score Assessment</h1>
+    <div class="subtitle">DRALT HealthUp Masterclass</div>
+    <div class="subtitle">DRALT स्वास्थ्य स्कोर आकलन</div>
+    <p class="meta">10 Questions · Maximum Score: 100</p>
+  </header>
+
+  <section class="intro" id="languagePage">
+    <p><strong>Instructions:</strong> Reflect on your health and choose one answer that best describes your usual experience.</p>
+    <p><strong>निर्देश:</strong> अपने स्वास्थ्य पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।</p>
+    <p>This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.</p>
+    <p>यह स्वास्थ्य-जागरूकता के लिए स्वयं-मूल्यांकन है, चिकित्सा निदान नहीं। शारीरिक टेस्ट केवल सुरक्षित और आरामदायक होने पर करें। दर्द, चक्कर, साँस फूलने या अस्थिरता होने पर टेस्ट छोड़ दें।</p>
+    <div class="actions"><button type="button" class="primary" id="startBtn">Start Assessment / आकलन शुरू करें</button></div>
+  </section>
+
+  <section id="testPage" style="display:none">
+    <div class="progress">
+      <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-label" id="progressLabel">0 of 10 answered</div>
+    </div>
+    <form id="assessment">
+      <div id="questions"></div>
+      <div class="error" id="error">Please answer all 10 questions before viewing your score.<br>कृपया स्कोर देखने से पहले सभी 10 प्रश्नों के उत्तर दें।</div>
+      <div class="actions"><button type="submit" class="primary">View My Score / मेरा स्कोर देखें</button></div>
+    </form>
+  </section>
+
+  <section class="result" id="result" style="display:none">
+    <h2 class="q-heading">Your DRALT Health Score / आपका DRALT स्वास्थ्य स्कोर</h2>
+    <div class="score" id="score"></div>
+    <div class="level" id="level"></div>
+    <p id="resultText"></p>
+    <p class="notice">This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.</p>
+    <p class="notice">यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षण या चिंता होने पर योग्य स्वास्थ्य विशेषज्ञ से सलाह लें।</p>
+    <div class="actions"><button type="button" class="secondary" id="restart">Restart Assessment / दोबारा आकलन करें</button></div>
+  </section>
+</div>
+
+<script>
+const questions = [
+{
+en:{q:"How regular and comfortable is your daily bowel routine?",d:"Think about your usual bowel movement pattern, ease of passing stool, and whether you often experience constipation or discomfort.",o:["Often irregular; constipation or discomfort is frequent.","Irregular on many days; some discomfort.","Usually regular, with occasional difficulty.","Regular and comfortable on most days.","Consistently regular, comfortable, and effortless over time."]},
+hi:{q:"आपका रोज़ का पेट साफ़ होने का रूटीन कितना नियमित और आरामदायक है?",d:"अपने आम शौच के रूटीन, मल त्याग में आसानी और कब्ज़ या परेशानी कितनी बार होती है—इस पर ध्यान दें।",o:["अक्सर अनियमित; कब्ज़ या परेशानी बार-बार होती है।","कई दिनों में अनियमितता या कुछ परेशानी होती है।","आमतौर पर नियमित; कभी-कभी परेशानी होती है।","अधिकतर दिनों में नियमित और आरामदायक।","लगातार नियमित, आरामदायक और बिना परेशानी के।"]},
+},
+{
+en:{q:"What do you notice when you look at the coating on your tongue?",d:"In natural light, gently look at the top of your tongue. Do not scrape hard. Notice whether there is a coating and its colour (white, yellow, brown, green, or another unusual colour). Tongue appearance alone cannot diagnose a disease. If unusual coating persists or comes with pain, sores, or bad breath, seek dental/medical advice.",o:["Thick or widespread coating, or unusual colour (yellow, brown, green, or other) often present.","Clearly noticeable coating on many days.","Light coating sometimes; often clears with routine oral hygiene.","Tongue is usually mostly clear, with only a light occasional coating.","Tongue is consistently clear or has only a very thin, normal-looking coating; oral hygiene is regular."]},
+hi:{q:"अपनी जीभ पर मौजूद परत को देखने पर आपको क्या दिखाई देता है?",d:"अच्छी प्राकृतिक रोशनी में जीभ के ऊपर वाले हिस्से को धीरे से देखें। ज़ोर से खुरचें नहीं। परत और उसका रंग देखें—सफेद, पीला, भूरा, हरा या कोई अन्य असामान्य रंग। केवल जीभ देखकर बीमारी का निदान नहीं किया जा सकता। यदि परत लगातार बनी रहे या दर्द, घाव अथवा दुर्गंध हो, तो दंत चिकित्सक/डॉक्टर से सलाह लें।",o:["मोटी या अधिक फैली परत, या पीला, भूरा, हरा अथवा अन्य असामान्य रंग अक्सर दिखता है।","कई दिनों में साफ़ दिखाई देने वाली परत होती है।","कभी-कभी हल्की परत दिखती है।","जीभ अधिकतर साफ़; कभी-कभी हल्की परत।","जीभ लगातार साफ़ या लगभग साफ़; नियमित मुख-सफाई।"]},
+},
+{
+en:{q:"How often, and how much, do you eat fresh whole fruits?",d:"Count fresh whole fruits, not only juice. Think about your usual intake and quantity.",o:["I rarely or never eat fresh whole fruits.","I eat fresh whole fruits occasionally, in small quantities.","I eat fresh whole fruits once or twice a week or on several days in small quantities.","I eat fresh whole fruits daily in good quantities.","I eat one or more fruit-only meals in good quantity daily."]},
+hi:{q:"आप ताज़े साबुत फल कितनी बार और कितनी मात्रा में खाते हैं?",d:"ताज़े साबुत फल गिनें, केवल जूस नहीं। अपनी सामान्य मात्रा और नियमितता पर ध्यान दें।",o:["मैं ताज़े साबुत फल बहुत कम या बिल्कुल नहीं खाता/खाती हूँ।","कभी-कभी थोड़ी मात्रा में फल खाता/खाती हूँ।","हफ्ते में एक या दो बार या कई दिनों में थोड़ी मात्रा में फल खाता/खाती हूँ।","रोज़ अच्छी मात्रा में ताज़े साबुत फल खाता/खाती हूँ।","रोज़ अच्छी मात्रा में एक या अधिक केवल-फल वाले भोजन करता/करती हूँ।"]},
+},
+{
+en:{q:"What is your breathing rate after the gentle walking test?",d:"SAFETY FIRST: Skip if you have chest pain, dizziness, unusual breathlessness, balance concerns, or have been advised to avoid exertion. Walk gently for 1 minute at a comfortable pace. Rest for 30 seconds, then count breaths for a full 1 minute (one breath = one inhale and exhale). Stop if unwell. This is a self-check, not a clinical test.",o:["25 or more breaths in 1 minute.","20–24 breaths in 1 minute.","16–19 breaths in 1 minute.","12–15 breaths in 1 minute.","11 or fewer breaths in 1 minute."]},
+hi:{q:"हल्की वॉक टेस्ट के बाद आपकी साँसों की दर कितनी है?",d:"पहले सुरक्षा: सीने में दर्द, चक्कर, असामान्य साँस फूलना, संतुलन की समस्या हो या डॉक्टर ने मेहनत से बचने को कहा हो तो टेस्ट छोड़ दें। आरामदायक गति से 1 मिनट हल्का चलें। 30 सेकंड आराम करें, फिर पूरे 1 मिनट साँसें गिनें (एक साँस = अंदर लेना और बाहर छोड़ना)। अस्वस्थ महसूस हो तो रुकें। यह स्वयं-जाँच है, क्लिनिकल टेस्ट नहीं।",o:["1 मिनट में 25 या अधिक साँसें।","1 मिनट में 20–24 साँसें।","1 मिनट में 16–19 साँसें।","1 मिनट में 12–15 साँसें।","1 मिनट में 11 या उससे कम साँसें।"]},
+},
+{
+en:{q:"How often do you feel energetic during the day and rested after sleep?",d:"Think about your usual energy across the day and how refreshed you feel after a typical night's sleep.",o:["Often exhausted or unrefreshed.","Frequently low energy or poor rest.","Energy and freshness vary; some good days.","Usually energetic and reasonably refreshed.","Consistently feel well-rested and have steady, suitable energy through the day."]},
+hi:{q:"दिन में आपकी ऊर्जा और नींद के बाद ताज़गी कैसी रहती है?",d:"दिनभर की आम ऊर्जा और रात की सामान्य नींद के बाद ताज़गी पर ध्यान दें।",o:["अक्सर बहुत थकान या नींद के बाद भी ताज़गी नहीं।","अक्सर ऊर्जा कम या आराम अधूरा लगता है।","ऊर्जा और ताज़गी बदलती रहती है; कुछ दिन अच्छे।","आमतौर पर ऊर्जा अच्छी और नींद के बाद ताज़गी।","लगातार पर्याप्त आराम और दिनभर स्थिर, उचित ऊर्जा।"]},
+},
+{
+en:{q:"How comfortable and satisfied are you with your current body weight?",d:"Use the reference calculator below if you know your height and weight. BMI is only a rough screening reference for adults and does not define an ideal weight for everyone.",o:["My weight is a major concern and I have not sought appropriate guidance.","I have concerns and my habits/support need improvement.","Somewhat concerned; I am taking small steps.","Generally comfortable; weight and habits are reasonably well managed.","My weight is appropriate for my individual health context, and I maintain it with sustainable habits and professional guidance when needed."]},
+hi:{q:"अपने वर्तमान शरीर के वज़न को लेकर आप कितने सहज और संतुष्ट हैं?",d:"यदि आपकी लंबाई और वज़न पता है, तो नीचे दिए गए संदर्भ कैलकुलेटर का उपयोग करें। BMI वयस्कों के लिए केवल एक सामान्य स्क्रीनिंग संदर्भ है; यह हर व्यक्ति का आदर्श वज़न तय नहीं करता।",o:["वज़न बड़ी चिंता है और उचित सलाह नहीं ली है।","चिंता है; आदतों या सहायता में सुधार की ज़रूरत है।","कुछ चिंता है; छोटे कदम उठा रहा/रही हूँ।","आमतौर पर संतुष्ट; वज़न और आदतें ठीक से संभली हुई हैं।","मेरी व्यक्तिगत स्वास्थ्य स्थिति के अनुसार वज़न उचित है और टिकाऊ आदतों से बनाए रखता/रखती हूँ; ज़रूरत पर विशेषज्ञ सलाह लेता/लेती हूँ।"]},
+},
+{
+en:{q:"How many health conditions do you have, how serious are they, and how many medicines do you take daily or frequently?",d:"Consider the number of health conditions, their severity, and the number of medicines you take daily or frequently. Do not stop or change prescribed medicines to improve this score.",o:["Multiple serious diseases and 3 or more medicines daily/frequently.","Several diseases, including serious conditions, and 2 or more medicines.","One or more ongoing diseases of moderate severity and/or regular medicines.","Only mild/manageable condition(s), no regular medicines or only one medicine as prescribed.","Zero diseases and zero medicines for 5 or more years."]},
+hi:{q:"आपको कितनी स्वास्थ्य समस्याएँ हैं, वे कितनी गंभीर हैं, और आप रोज़ाना या अक्सर कितनी दवाएँ लेते हैं?",d:"बीमारियों की संख्या, उनकी गंभीरता और रोज़ाना या अक्सर ली जाने वाली दवाओं की संख्या पर विचार करें। स्कोर बढ़ाने के लिए डॉक्टर की दवा बंद या बदलें नहीं।",o:["कई गंभीर बीमारियाँ और रोज़ाना/अक्सर 3 या अधिक दवाएँ।","कई बीमारियाँ, जिनमें गंभीर स्थितियाँ भी हों, और 2 या अधिक दवाएँ।","एक या अधिक जारी मध्यम गंभीरता की बीमारियाँ और/या नियमित दवाएँ।","केवल हल्की/संभालने योग्य समस्या(एँ), नियमित दवा नहीं या डॉक्टर के अनुसार केवल एक दवा।","5 या अधिक वर्षों से शून्य बीमारियाँ और शून्य दवाएँ।"]},
+},
+{
+en:{q:"How flexible are your shoulders, knees, and spine?",d:"Perform these 3 tests gently. For the Shoulder Flexibility Test and Knee Flexibility Test, perform on BOTH left and right sides. Test 1 — Shoulder: raise one arm over the shoulder and bend it behind your head; bring the other arm behind your back from below and notice how close your fingers come. Switch arms and repeat. Test 2 — Knee: stand beside a stable chair or wall and hold support; bend one leg at the knee, bringing heel toward buttocks comfortably. Repeat on the other leg. Test 3 — Spine bending: stand with knees relaxed and slowly bend forward from hips/spine; notice comfortable range. The score reflects five assessments: left/right shoulder, left/right knee, and spine bending. Do not force or test through pain; skip if unsafe.",o:["Severe restriction across most or all five assessments.","Significant restriction in four or more assessments.","Moderate restriction in three or more assessments.","Mild restriction in one or more assessments; otherwise good movement.","Excellent, comfortable flexibility across all five assessments, without forcing."]},
+hi:{q:"आपके कंधे, घुटने और रीढ़ की लचक कैसी है?",d:"इन 3 टेस्ट को धीरे और आराम से करें। Shoulder Flexibility और Knee Flexibility टेस्ट दोनों तरफ—बाएँ और दाएँ—करें। टेस्ट 1 — कंधा: एक हाथ को सिर के ऊपर से पीछे मोड़ें; दूसरा हाथ नीचे से पीठ के पीछे ले जाएँ और देखें कि उँगलियाँ कितनी पास आती हैं। फिर हाथ बदलकर दोहराएँ। टेस्ट 2 — घुटना: स्थिर कुर्सी या दीवार के पास खड़े होकर सहारा लें; एक पैर घुटने से मोड़ें और एड़ी को आराम से नितंब की ओर लाएँ। दूसरे पैर पर दोहराएँ। टेस्ट 3 — रीढ़ आगे झुकाना: घुटने ढीले रखकर खड़े हों और कूल्हों/रीढ़ से धीरे आगे झुकें; आरामदायक सीमा देखें। स्कोर पाँच जाँचों पर आधारित है: बायाँ/दायाँ कंधा, बायाँ/दायाँ घुटना और रीढ़ का झुकाव। ज़ोर न लगाएँ, दर्द में टेस्ट न करें; असुरक्षित हो तो छोड़ दें।",o:["पाँचों में से अधिकतर या सभी जाँचों में गंभीर कमी।","चार या अधिक जाँचों में स्पष्ट कमी।","तीन या अधिक जाँचों में मध्यम कमी।","एक या अधिक जाँचों में हल्की कमी; बाकी गति अच्छी।","बिना ज़ोर लगाए पाँचों जाँचों में उत्कृष्ट और आरामदायक लचक।"]},
+},
+{
+en:{q:"How comfortably do you adapt to seasons, normal weather changes, and rain bathing?",d:"Think about your usual comfort. Do not deliberately expose yourself to extreme heat, cold, or unsafe conditions. Sun exposure should be healthy-duration and appropriate for your circumstances.",o:["Weather or seasonal changes often make me unwell or disrupt routine.","I often struggle with seasonal/weather changes or rain.","Sometimes uncomfortable; adaptation varies.","Comfortably adapt to most seasons, normal weather changes, and getting wet in rain.","Comfortable with healthy-duration sun exposure in all seasons, normal weather changes, and rain bathing, within safe conditions."]},
+hi:{q:"आप मौसम, सामान्य मौसम बदलाव और बारिश में स्नान के साथ कितने सहजता से ढलते हैं?",d:"अपने सामान्य आराम पर ध्यान दें। जानबूझकर अत्यधिक गर्मी, ठंड या असुरक्षित परिस्थितियों में न जाएँ। धूप में रहना उचित अवधि और अपनी परिस्थिति के अनुसार सुरक्षित होना चाहिए।",o:["मौसम/ऋतु बदलाव से अक्सर अस्वस्थता या दिनचर्या बाधित होती है।","मौसम बदलाव या बारिश में अक्सर कठिनाई होती है।","कभी-कभी असहजता; ढलना बदलता रहता है।","अधिकतर मौसम, सामान्य बदलाव और बारिश में भीगने में सहज हूँ।","सभी ऋतुओं में उचित अवधि की स्वस्थ धूप, सामान्य मौसम बदलाव और बारिश में स्नान के साथ सुरक्षित सीमा में सहज हूँ।"]},
+},
+{
+en:{q:"How long can you maintain balance on each leg during the balance test?",d:"SAFETY: Stand beside a sturdy counter or wall and keep support within reach. With eyes open, stand on one leg and time up to 60 seconds; then repeat on the other leg. Use your hand for support as needed. Do not try if dizzy, unstable, injured, or at risk of falling. Stop immediately if unsafe. Score based on the weaker side. This is a self-check, not a diagnosis.",o:["Unable to safely maintain balance on either leg, even with support.","Less than 10 seconds on at least one leg.","10–19 seconds on the weaker leg.","20–39 seconds on the weaker leg.","Comfortably and safely maintain balance for 60 seconds on each leg."]},
+hi:{q:"Balance टेस्ट में आप प्रत्येक पैर पर कितनी देर संतुलन बनाए रख सकते हैं?",d:"सुरक्षा: मज़बूत काउंटर या दीवार के पास खड़े हों और सहारा पास रखें। आँखें खुली रखकर एक पैर पर अधिकतम 60 सेकंड समय लें; फिर दूसरे पैर पर दोहराएँ। ज़रूरत पर हाथ से सहारा लें। चक्कर, अस्थिरता, चोट या गिरने का जोखिम हो तो न करें। असुरक्षित लगे तो तुरंत रुकें। स्कोर कमज़ोर तरफ़ के आधार पर होगा। यह स्वयं-जाँच है, निदान नहीं।",o:["सहारे के साथ भी किसी पैर पर सुरक्षित संतुलन नहीं बना पाता/पाती।","कम से कम एक पैर पर 10 सेकंड से कम।","कमज़ोर पैर पर 10–19 सेकंड।","कमज़ोर पैर पर 20–39 सेकंड।","दोनों पैरों पर प्रत्येक 60 सेकंड तक आराम से और सुरक्षित संतुलन बनाए रख सकता/सकती हूँ।"]},
+},
+];
+
+const scoreValues = [0, 2.5, 5, 7.5, 10];
+const questionContainer = document.getElementById("questions");
+
+function buildQuestions() {
+  questions.forEach((q, index) => {
+    const section = document.createElement("section");
+    section.className = "question";
+    section.innerHTML = `
+      <h2 class="q-heading">Q${index + 1}. ${q.en.q}</h2>
+      <p class="q-hi">${q.hi.q}</p>
+      <div class="desc">${q.en.d}<br><br><span lang="hi">${q.hi.d}</span></div>
+      <div class="options" role="radiogroup" aria-label="Question ${index + 1}">
+        ${q.en.o.map((option, optionIndex) => `
+          <label class="option">
+            <input type="radio" name="q${index}" value="${optionIndex}" required>
+            <span class="option-text">${option}<span class="option-hi">${q.hi.o[optionIndex]}</span></span>
+          </label>
+        `).join("")}
+      </div>
+    `;
+    questionContainer.appendChild(section);
+
+    // Keep the existing weight reference calculator directly with the weight question (Q6).
+    if (index === 5) {
+      const calc = document.createElement("div");
+      calc.className = "calc";
+      calc.innerHTML = `
+        <h3>Normal weight range calculator / सामान्य वज़न सीमा कैलकुलेटर</h3>
+        <div class="calcgrid">
+          <div>
+            <label for="heightUnit">Height unit / लंबाई की इकाई</label>
+            <select id="heightUnit">
+              <option value="cm">Centimeters (cm) / सेंटीमीटर (सेमी)</option>
+              <option value="ft">Feet & Inches / फीट और इंच</option>
+            </select>
+            <input type="number" id="height" min="100" max="230" placeholder="Height in cm / लंबाई सेमी में">
+            <div id="feetFields" style="display:none;gap:8px">
+              <input type="number" id="feet" min="3" max="8" placeholder="Feet / फीट">
+              <input type="number" id="inches" min="0" max="11" placeholder="Inches / इंच">
+            </div>
+          </div>
+          <div>
+            <label for="weight">Current weight (kg) / वर्तमान वज़न (किलो)</label>
+            <input type="number" id="weight" min="20" max="300" placeholder="e.g. 65 / जैसे 65">
+          </div>
+        </div>
+        <div class="calcresult" id="calcresult">Enter your height to see the normal weight range / सामान्य वज़न सीमा देखने के लिए लंबाई दर्ज करें।</div>
+      `;
+      section.appendChild(calc);
+    }
+  });
+}
+
+function updateProgress() {
+  const answered = questions.reduce((count, q, i) =>
+    count + (document.querySelector(`input[name="q${i}"]:checked`) ? 1 : 0), 0);
+  document.getElementById("progressBar").style.width = `${answered * 10}%`;
+  document.getElementById("progressLabel").textContent = `${answered} of 10 answered · ${
+    answered
+  } / 10 उत्तर दिए`;
+}
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  document.getElementById("languagePage").style.display = "none";
+  document.getElementById("testPage").style.display = "block";
+  buildQuestions();
+  updateProgress();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+document.getElementById("assessment").addEventListener("change", event => {
+  if (event.target.matches('input[type="radio"]')) {
+    document.querySelectorAll(`input[name="${event.target.name}"]`).forEach(input => {
+      input.closest(".option").classList.toggle("selected", input.checked);
+    });
+    updateProgress();
+    document.getElementById("error").style.display = "none";
+  }
+});
+
+document.getElementById("assessment").addEventListener("submit", event => {
+  event.preventDefault();
+  const answers = questions.map((q, i) => document.querySelector(`input[name="q${i}"]:checked`));
+  if (answers.some(answer => !answer)) {
+    document.getElementById("error").style.display = "block";
+    const firstMissing = answers.findIndex(answer => !answer);
+    document.querySelectorAll(".question")[firstMissing].scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  const total = answers.reduce((sum, answer) => sum + scoreValues[Number(answer.value)], 0);
+  let level, message;
+  if (total < 40) {
+    level = "Needs Attention / ध्यान देने की आवश्यकता";
+    message = "Your responses suggest there may be areas of your health habits or physical well-being that deserve attention.";
+  } else if (total < 60) {
+    level = "Developing / सुधार की दिशा में";
+    message = "Your responses suggest some health areas may benefit from supportive changes and consistent habits.";
+  } else if (total < 80) {
+    level = "Moderate / मध्यम";
+    message = "Your responses indicate a moderate self-reported health score.";
+  } else if (total < 90) {
+    level = "High / उच्च";
+    message = "Your responses indicate a high self-reported health score.";
+  } else {
+    level = "Excellent / उत्कृष्ट";
+    message = "Your responses indicate an excellent self-reported health score.";
+  }
+  document.getElementById("score").textContent = `${Math.round(total)} / 100`;
+  document.getElementById("level").textContent = level;
+  document.getElementById("resultText").textContent = message;
+  document.getElementById("testPage").style.display = "none";
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+document.getElementById("restart").addEventListener("click", () => {
+  document.getElementById("assessment").reset();
+  document.getElementById("questions").innerHTML = "";
+  document.getElementById("result").style.display = "none";
+  document.getElementById("testPage").style.display = "none";
+  document.getElementById("languagePage").style.display = "block";
+  document.getElementById("error").style.display = "none";
+  document.getElementById("progressBar").style.width = "0";
+  document.getElementById("progressLabel").textContent = "0 of 10 answered";
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+function toggleHeightUnit() {
+  const feetMode = document.getElementById("heightUnit").value === "ft";
+  document.getElementById("height").style.display = feetMode ? "none" : "block";
+  document.getElementById("feetFields").style.display = feetMode ? "flex" : "none";
+  document.getElementById("height").value = "";
+  document.getElementById("feet").value = "";
+  document.getElementById("inches").value = "";
+  calculateWeight();
+}
+function calculateWeight() {
+  let h;
+  if (document.getElementById("heightUnit").value === "cm") {
+    h = parseFloat(document.getElementById("height").value);
+  } else {
+    const f = parseFloat(document.getElementById("feet").value);
+    const i = parseFloat(document.getElementById("inches").value);
+    if (Number.isFinite(f) && Number.isFinite(i)) h = (f * 12 + i) * 2.54;
+  }
+  const result = document.getElementById("calcresult");
+  if (h >= 100 && h <= 230) {
+    const hm = h / 100, lo = 18.5 * hm * hm, hi = 24.9 * hm * hm;
+    result.textContent = `Normal weight range / सामान्य वज़न सीमा: ${lo.toFixed(1)}–${hi.toFixed(1)} kg / किलो`;
+  } else {
+    result.textContent = "Enter your height to see the normal weight range / सामान्य वज़न सीमा देखने के लिए लंबाई दर्ज करें।";
+  }
+}
+document.addEventListener("change", event => {
+  if (event.target.id === "heightUnit") toggleHeightUnit();
+});
+document.addEventListener("input", event => {
+  if (["height","feet","inches","weight"].includes(event.target.id)) calculateWeight();
+});
+</script>
+</body>
+</html>
