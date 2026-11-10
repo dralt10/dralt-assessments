@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DRALT Health Score Assessment</title>
+<title>DRALT Health Score Test | Masterclass</title>
 <style>
 :root{--brand:#AE275F;--ink:#29242a;--muted:#68616a;--bg:#f7f3f6;--line:#eadde4}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,"Noto Sans Devanagari",sans-serif;color:var(--ink);padding:16px}
@@ -31,13 +31,9 @@ button{font:inherit}.primary,.secondary{border:0;border-radius:12px;padding:13px
 <div class="card" id="languagePage">
 <div class="brand">DRALT HEALTHUP</div>
 <h1 id="welcomeTitle">DRALT Health Score Assessment</h1>
-<p class="lead" id="welcomeLead">Choose your test language. All questions and instructions will appear in the selected language.</p>
-<div class="langs">
-<button class="lang active" id="enBtn" onclick="setLanguage('en')">English</button>
-<button class="lang" id="hiBtn" onclick="setLanguage('hi')">हिन्दी</button>
-</div>
-<p class="lead" id="disclaimer">This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.</p>
-<div style="text-align:center"><button class="primary" id="startBtn" onclick="startTest()">Start Assessment →</button></div>
+<p class="lead" id="welcomeLead">Reflect on your health and choose the answer that best describes your usual experience.<br><span lang="hi">अपने स्वास्थ्य पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।</span></p>
+<p class="lead" id="disclaimer">This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.<br><br><span lang="hi">यह स्वास्थ्य-जागरूकता के लिए स्वयं-मूल्यांकन है, चिकित्सा निदान नहीं। शारीरिक टेस्ट केवल सुरक्षित और आरामदायक होने पर करें। दर्द, चक्कर, साँस फूलने या अस्थिरता होने पर टेस्ट छोड़ दें।</span></p>
+<div style="text-align:center"><button class="primary" id="startBtn" onclick="startTest()">Start Assessment / आकलन शुरू करें →</button></div>
 </div>
 
 <div class="card hidden" id="testPage">
@@ -59,9 +55,9 @@ button{font:inherit}.primary,.secondary{border:0;border-radius:12px;padding:13px
 
 <div class="card hidden" id="resultPage">
 <div class="brand">DRALT HEALTHUP</div>
-<div class="result"><div class="scorelabel" id="scorelabel">YOUR DRALT HEALTH SCORE</div><div class="score"><span id="score">0</span><span style="font-size:30px;color:#777"> / 100</span></div></div>
-<p class="smallnote" id="resultnote">This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.</p>
-<div style="text-align:center;margin-top:20px"><button class="secondary" id="restartBtn" onclick="restart()">Restart Assessment</button></div>
+<div class="result"><div class="scorelabel" id="scorelabel">YOUR DRALT HEALTH SCORE<br><span lang="hi">आपका DRALT स्वास्थ्य स्कोर</span></div><div class="score"><span id="score">0</span><span style="font-size:30px;color:#777"> / 100</span></div></div>
+<p class="smallnote" id="resultnote">This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.<br><br><span lang="hi">यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षण या चिंता होने पर योग्य स्वास्थ्य विशेषज्ञ से सलाह लें।</span></p>
+<div style="text-align:center;margin-top:20px"><button class="secondary" id="restartBtn" onclick="restart()">Restart Assessment / दोबारा आकलन करें</button></div>
 </div>
 </div>
 
@@ -109,29 +105,53 @@ hi:{q:"Balance टेस्ट में आप प्रत्येक पै�
 },
 ];
 
-let language="en", current=0, answers=Array(10).fill(null);
+let current=0, answers=Array(10).fill(null);
 const $=id=>document.getElementById(id);
-function setLanguage(lang){language=lang;$("enBtn").classList.toggle("active",lang==="en");$("hiBtn").classList.toggle("active",lang==="hi");
-$("welcomeTitle").textContent=lang==="en"?"DRALT Health Score Assessment":"DRALT स्वास्थ्य स्कोर आकलन";
-$("welcomeLead").textContent=lang==="en"?"Choose your test language. All questions and instructions will appear in the selected language.":"टेस्ट की भाषा चुनें। सभी प्रश्न और निर्देश चुनी हुई भाषा में दिखाई देंगे।";
-$("disclaimer").textContent=lang==="en"?"This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.":"यह स्वास्थ्य-जागरूकता के लिए स्वयं-मूल्यांकन है, चिकित्सा निदान नहीं। शारीरिक टेस्ट केवल सुरक्षित और आरामदायक होने पर करें। दर्द, चक्कर, साँस फूलने या अस्थिरता पर टेस्ट छोड़ दें।";
-$("startBtn").textContent=lang==="en"?"Start Assessment →":"आकलन शुरू करें →";
-}
 function startTest(){current=0;answers=Array(10).fill(null);$("languagePage").classList.add("hidden");$("resultPage").classList.add("hidden");$("testPage").classList.remove("hidden");renderQuestion()}
-function renderQuestion(){const item=questions[current][language];$("stepmeta").textContent=language==="en"?`QUESTION ${current+1} OF 10`:`प्रश्न ${current+1} / 10`;$("bar").style.width=((current+1)*10)+"%";$("question").textContent=item.q;$("instruction").textContent=item.d;$("instruction").classList.remove("hidden");$("options").innerHTML="";
-item.o.forEach((text,i)=>{const label=document.createElement("label");label.className="option"+(answers[current]===i?" selected":"");label.innerHTML=`<input type="radio" name="answer" value="${i}"><span></span>`;label.querySelector("span").textContent=text;label.querySelector("input").checked=answers[current]===i;label.onclick=()=>selectOption(i);$("options").appendChild(label)});
-$("weightCalc").classList.toggle("hidden",current!==5);$("backBtn").disabled=current===0;$("nextBtn").disabled=answers[current]===null;$("nextBtn").textContent=current===9?(language==="en"?"Show Score":"स्कोर देखें"):(language==="en"?"Next →":"आगे →");$("backBtn").textContent=language==="en"?"← Back":"← पीछे";
-$("calcTitle").textContent=language==="en"?"Normal weight range calculator":"सामान्य वज़न सीमा कैलकुलेटर";$("heightLabel").textContent=language==="en"?"Height unit":"लंबाई की इकाई";$("weightLabel").textContent=language==="en"?"Current weight (kg)":"वर्तमान वज़न (किलो)";$("heightUnit").options[0].text=language==="en"?"Centimeters (cm)":"सेंटीमीटर (सेमी)";$("heightUnit").options[1].text=language==="en"?"Feet & Inches":"फीट और इंच";
+function renderQuestion(){
+const item=questions[current];
+$("stepmeta").textContent=`QUESTION ${current+1} OF 10 / प्रश्न ${current+1} / 10`;
+$("bar").style.width=((current+1)*10)+"%";
+$("question").innerHTML=item.en.q+'<br><span lang="hi">'+item.hi.q+'</span>';
+$("instruction").innerHTML=item.en.d+'<br><br><span lang="hi">'+item.hi.d+'</span>';
+$("instruction").classList.remove("hidden");$("options").innerHTML="";
+item.en.o.forEach((text,i)=>{
+const label=document.createElement("label");
+label.className="option"+(answers[current]===i?" selected":"");
+label.innerHTML=`<input type="radio" name="answer" value="${i}"><span></span>`;
+label.querySelector("span").innerHTML=text+'<br><span lang="hi">'+item.hi.o[i]+'</span>';
+label.querySelector("input").checked=answers[current]===i;
+label.onclick=()=>selectOption(i);
+$("options").appendChild(label)
+});
+$("weightCalc").classList.toggle("hidden",current!==5);
+$("backBtn").disabled=current===0;
+$("nextBtn").disabled=answers[current]===null;
+$("nextBtn").textContent=current===9?"Show Score / स्कोर देखें":"Next / आगे →";
+$("backBtn").textContent="← Back / पीछे";
+$("calcTitle").innerHTML="Normal weight range calculator / सामान्य वज़न सीमा कैलकुलेटर";
+$("heightLabel").textContent="Height unit / लंबाई की इकाई";
+$("weightLabel").textContent="Current weight (kg) / वर्तमान वज़न (किलो)";
+$("heightUnit").options[0].text="Centimeters (cm) / सेंटीमीटर (सेमी)";
+$("heightUnit").options[1].text="Feet & Inches / फीट और इंच";
 }
 function selectOption(i){answers[current]=i;renderQuestion()}
 function next(){if(answers[current]===null)return;if(current<9){current++;renderQuestion()}else showResult()}
 function previous(){if(current>0){current--;renderQuestion()}}
-function showResult(){const score=answers.reduce((sum,val)=>sum+(val*2.5),0);$("testPage").classList.add("hidden");$("resultPage").classList.remove("hidden");$("score").textContent=Math.round(score);$("scorelabel").textContent=language==="en"?"YOUR DRALT HEALTH SCORE":"आपका DRALT स्वास्थ्य स्कोर";$("resultnote").textContent=language==="en"?"This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.":"यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षण या चिंता होने पर योग्य स्वास्थ्य विशेषज्ञ से सलाह लें।";$("restartBtn").textContent=language==="en"?"Restart Assessment":"दोबारा आकलन करें"}
+function showResult(){
+const score=answers.reduce((sum,val)=>sum+(val*2.5),0);
+$("testPage").classList.add("hidden");$("resultPage").classList.remove("hidden");
+$("score").textContent=Math.round(score);
+$("scorelabel").innerHTML="YOUR DRALT HEALTH SCORE<br><span lang=\"hi\">आपका DRALT स्वास्थ्य स्कोर</span>";
+$("resultnote").innerHTML="This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.<br><br><span lang=\"hi\">यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षण या चिंता होने पर योग्य स्वास्थ्य विशेषज्ञ से सलाह लें।</span>";
+$("restartBtn").textContent="Restart Assessment / दोबारा आकलन करें";
+}
 function toggleHeightUnit(){const ft=$("heightUnit").value==="ft";$("height").classList.toggle("hidden",ft);$("feetFields").classList.toggle("hidden",!ft);$("height").value="";$("feet").value="";$("inches").value="";}
-function calculateWeight(){let h;if($("heightUnit").value==="cm"){h=parseFloat($("height").value)}else{const f=parseFloat($("feet").value),i=parseFloat($("inches").value);if(Number.isFinite(f)&&Number.isFinite(i))h=(f*12+i)*2.54;}
-if(h>=100&&h<=230){const hm=h/100,lo=18.5*hm*hm,hi=24.9*hm*hm;$("calcresult").textContent=language==="en"?`Normal weight range: ${lo.toFixed(1)}–${hi.toFixed(1)} kg`:`सामान्य वज़न सीमा: ${lo.toFixed(1)}–${hi.toFixed(1)} किलो`;}else $("calcresult").textContent=language==="en"?"Enter your height to see the normal weight range.":"सामान्य वज़न सीमा देखने के लिए लंबाई दर्ज करें।"}
-function restart(){current=0;answers=Array(10).fill(null);$("resultPage").classList.add("hidden");$("languagePage").classList.remove("hidden");setLanguage(language)}
-setLanguage("en");
+function calculateWeight(){
+let h;if($("heightUnit").value==="cm"){h=parseFloat($("height").value)}else{const f=parseFloat($("feet").value),i=parseFloat($("inches").value);if(Number.isFinite(f)&&Number.isFinite(i))h=(f*12+i)*2.54;}
+if(h>=100&&h<=230){const hm=h/100,lo=18.5*hm*hm,hi=24.9*hm*hm;$("calcresult").textContent=`Normal weight range / सामान्य वज़न सीमा: ${lo.toFixed(1)}–${hi.toFixed(1)} kg / किलो`;}else $("calcresult").textContent="Enter your height to see the normal weight range / सामान्य वज़न सीमा देखने के लिए लंबाई दर्ज करें।"
+}
+function restart(){current=0;answers=Array(10).fill(null);$("resultPage").classList.add("hidden");$("languagePage").classList.remove("hidden")}
 </script>
 </body>
 </html>
