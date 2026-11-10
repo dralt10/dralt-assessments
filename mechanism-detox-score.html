@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALTathon | DRALT Detox Health Score Test</title>
+<style>
+:root{--magenta:#AE275F;--magenta-dark:#861846;--bg:#f8f4f6;--text:#28232a;--muted:#6b6269;--border:#eadde4;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text);line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+.brand{text-align:center;color:var(--magenta);font-weight:800;letter-spacing:2px;font-size:14px;margin:4px 0 18px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:clamp(20px,5vw,34px);box-shadow:0 8px 28px rgba(70,20,45,.06)}
+h1{font-size:clamp(24px,5vw,32px);line-height:1.25;margin:0 0 10px;color:var(--magenta)}
+h2{font-size:22px;margin:0 0 8px}
+p{margin:8px 0 14px}
+.sub{color:var(--muted)}
+.langs{display:flex;gap:10px;margin:22px 0}
+button{font:inherit;cursor:pointer}
+.lang{flex:1;border:1px solid var(--magenta);border-radius:12px;padding:12px;background:#fff;color:var(--magenta);font-weight:700}
+.lang.active,.primary{background:var(--magenta);color:#fff}
+.primary{border:0;border-radius:12px;padding:13px 20px;font-weight:700;width:100%;margin-top:14px}
+.primary:hover{background:var(--magenta-dark)}
+.notice{font-size:13px;color:var(--muted);background:#fbf7f9;border:1px solid var(--border);padding:12px;border-radius:10px;margin-top:16px}
+.progressrow{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);margin-bottom:8px}
+.track{height:8px;background:#f0e5eb;border-radius:20px;overflow:hidden;margin-bottom:22px}
+.bar{height:100%;background:var(--magenta);width:0;transition:width .2s}
+.qnum{color:var(--magenta);font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:6px}
+.question{font-size:clamp(19px,4vw,23px);font-weight:700;line-height:1.4;margin-bottom:8px}
+.hindi{font-size:18px;font-weight:600;color:#4d4148;margin:8px 0 12px}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 18px}
+.options{display:grid;gap:10px}
+.option{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text)}
+.option:hover{border-color:var(--magenta)}
+.option.selected{border-color:var(--magenta);background:#fcf2f7;box-shadow:0 0 0 1px var(--magenta)}
+.scorepill{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f5e5ed;color:var(--magenta);font-weight:800}
+.opttext{font-size:15px}
+.optHindi{display:block;color:var(--muted);margin-top:4px;font-size:14px}
+.nav{display:flex;gap:10px;margin-top:22px}
+.nav button{flex:1;border-radius:12px;padding:12px;border:1px solid var(--border);font-weight:700;background:#fff;color:var(--text)}
+.nav .next{background:var(--magenta);color:#fff;border-color:var(--magenta)}
+.nav button:disabled{opacity:.4;cursor:not-allowed}
+.result{text-align:center}
+.score{font-size:56px;color:var(--magenta);font-weight:800;line-height:1.2;margin:14px 0}
+.resultband{font-size:22px;font-weight:800;color:var(--magenta)}
+.resultcopy{margin:16px 0}
+.hidden{display:none!important}
+@media(max-width:480px){.wrap{padding:14px 10px 28px}.card{padding:20px 16px}.option{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DRALT HEALTHUP</div>
+  <main class="card" id="welcome">
+    <h1>DRALTathon</h1>
+    <h2>DRALT Detox Health Score Test</h2>
+    <p class="sub" id="intro">Reflect on your current condition and select the answer that best describes your usual experience.</p>
+    <div class="langs">
+      <button class="lang active" id="enBtn" onclick="setLang('en')">English</button>
+      <button class="lang" id="hiBtn" onclick="setLang('hi')">हिन्दी</button>
+    </div>
+    <p id="instruction">Each question has five options. Select one answer for every question. Your total score is out of 100.</p>
+    <div class="notice" id="disclaimer">This is a wellness self-assessment tool, not a medical diagnosis. Symptoms can have many causes. Seek advice from a qualified healthcare professional for persistent or concerning symptoms.</div>
+    <button class="primary" id="startBtn" onclick="start()">Start Assessment →</button>
+  </main>
+  <main class="card hidden" id="quiz">
+    <div class="progressrow"><span id="progressText">Question 1 of 10</span><span id="answeredText">Answered: 0/10</span></div>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <div class="qnum" id="qnum">QUESTION 1</div>
+    <div class="question" id="question"></div>
+    <div class="hindi" id="questionHindi"></div>
+    <div class="hint" id="hint"></div>
+    <div class="options" id="options"></div>
+    <div class="nav">
+      <button id="backBtn" onclick="back()">← Back</button>
+      <button class="next" id="nextBtn" onclick="next()" disabled>Next →</button>
+    </div>
+  </main>
+  <main class="card hidden result" id="result">
+    <div class="brand">DRALT HEALTHUP</div>
+    <h1 id="resultTitle">YOUR DRALT DETOX HEALTH SCORE</h1>
+    <div class="score"><span id="total">0</span><span style="font-size:22px"> / 100</span></div>
+    <div class="resultband" id="band"></div>
+    <p class="resultcopy" id="resultMessage"></p>
+    <div class="notice" id="resultDisclaimer">This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.</div>
+    <button class="primary" onclick="restart()" id="restartBtn">Restart Assessment</button>
+  </main>
+</div>
+<script>
+const questions = [
+{en:"How regular and comfortable is your daily bowel routine?",hi:"आपकी दैनिक मल त्याग की प्रक्रिया कितनी नियमित और आरामदायक है?",hintEn:"Think about your usual bowel movement pattern, ease of passing stool, and whether you often experience constipation or discomfort.",hintHi:"अपने सामान्य मल त्याग के पैटर्न, मल त्यागने में आसानी और कब्ज़ या परेशानी की आवृत्ति पर विचार करें।",opts:[
+["Often irregular; constipation or discomfort is frequent.","अक्सर अनियमित; कब्ज़ या परेशानी बार-बार होती है।",1],
+["Irregular on many days; some discomfort.","कई दिनों तक अनियमित; कुछ परेशानी होती है।",3],
+["Usually regular, with occasional difficulty.","सामान्यतः नियमित; कभी-कभी परेशानी होती है।",5],
+["Regular and comfortable on most days.","अधिकांश दिनों में नियमित और आरामदायक।",8],
+["Always consistently regular, comfortable, quick, and effortless.","हमेशा नियमित, आरामदायक, जल्दी और बिना किसी प्रयास के।",10]]},
+{en:"How comfortably and regularly do you urinate?",hi:"आप कितनी आरामदायक और नियमित रूप से पेशाब करते हैं?",hintEn:"Consider your usual urination pattern and whether you experience difficulty or discomfort.",hintHi:"अपने सामान्य पेशाब के पैटर्न और किसी कठिनाई या परेशानी पर विचार करें।",opts:[
+["I frequently experience difficulty or discomfort during urination.","मुझे अक्सर पेशाब करने में कठिनाई या परेशानी होती है।",1],
+["Urination is often uncomfortable or irregular.","पेशाब करना अक्सर असहज या अनियमित होता है।",3],
+["Generally okay, but I occasionally experience discomfort or irregularity.","सामान्यतः ठीक, लेकिन कभी-कभी परेशानी या अनियमितता होती है।",5],
+["Urination is comfortable and mostly regular.","पेशाब करना आरामदायक और अधिकांशतः नियमित होता है।",8],
+["Urination is consistently comfortable and regular.","पेशाब करना हमेशा आरामदायक और नियमित होता है।",10]]},
+{en:"How naturally and appropriately does your body sweat?",hi:"आपके शरीर को कितनी स्वाभाविक और उचित मात्रा में पसीना आता है?",hintEn:"Consider sweating during activity or heat, as well as unexplained excessive sweating.",hintHi:"गतिविधि या गर्मी में पसीना आने के साथ-साथ बिना कारण अत्यधिक पसीना आने पर भी विचार करें।",opts:[
+["I rarely sweat during activity or heat, OR I sweat excessively without an apparent reason.","गतिविधि या गर्मी में भी बहुत कम पसीना आता है, या बिना स्पष्ट कारण अत्यधिक पसीना आता है।",1],
+["My sweating is often inadequate or excessive, even when not appropriate.","मुझे अक्सर आवश्यकता से कम या अधिक पसीना आता है, अनुचित परिस्थितियों में भी।",3],
+["Sometimes appropriate, but I occasionally sweat too little or too much.","कभी उचित पसीना आता है, लेकिन कभी कम या अधिक पसीना आता है।",5],
+["I sweat appropriately during activity or hot weather, with occasional minor irregularities.","गतिविधि या गर्म मौसम में उचित पसीना आता है; कभी-कभी मामूली अनियमितता होती है।",8],
+["My body sweats naturally according to activity and weather, without unexplained excessive sweating.","गतिविधि और मौसम के अनुसार स्वाभाविक पसीना आता है; बिना कारण अत्यधिक पसीना नहीं आता।",10]]},
+{en:"How healthy and clear is your skin without frequent rashes, pimples or itching?",hi:"बार-बार चकत्ते, मुंहासे या खुजली हुए बिना आपकी त्वचा कितनी स्वस्थ और साफ रहती है?",hintEn:"Think about the frequency of skin irritation or other recurring skin concerns.",hintHi:"त्वचा में जलन या बार-बार होने वाली अन्य समस्याओं की आवृत्ति पर विचार करें।",opts:[
+["My skin frequently has rashes, pimples, itching or other problems.","मेरी त्वचा पर अक्सर चकत्ते, मुंहासे, खुजली या अन्य समस्याएँ होती हैं।",1],
+["I experience skin problems regularly.","मुझे नियमित रूप से त्वचा संबंधी समस्याएँ होती हैं।",3],
+["My skin is generally okay, but I occasionally experience problems.","मेरी त्वचा सामान्यतः ठीक रहती है, लेकिन कभी-कभी समस्याएँ होती हैं।",5],
+["My skin is mostly healthy and clear.","मेरी त्वचा अधिकांशतः स्वस्थ और साफ रहती है।",8],
+["My skin is consistently healthy and clear, with minimal issues.","मेरी त्वचा हमेशा स्वस्थ और साफ रहती है; समस्याएँ बहुत कम होती हैं।",10]]},
+{en:"How free are you from bloating and gas?",hi:"आप पेट फूलने और गैस की समस्या से कितने मुक्त रहते हैं?",hintEn:"Consider bloating or gas at any time — before meals, after meals, or unrelated to meals.",hintHi:"भोजन से पहले, भोजन के बाद या भोजन से संबंधित न होने पर भी पेट फूलने और गैस की समस्या पर विचार करें।",opts:[
+["I experience bloating and gas very frequently.","मुझे बहुत बार पेट फूलने और गैस की समस्या होती है।",1],
+["I frequently experience bloating or gas.","मुझे अक्सर पेट फूलने या गैस की समस्या होती है।",3],
+["I occasionally experience bloating or gas.","मुझे कभी-कभी पेट फूलने या गैस की समस्या होती है।",5],
+["I rarely experience bloating or gas.","मुझे बहुत कम पेट फूलने या गैस की समस्या होती है।",8],
+["I never experience bloating or gas.","मुझे कभी भी पेट फूलने या गैस की समस्या नहीं होती।",10]]},
+{en:"How free are you from acidity, heartburn, and acid reflux?",hi:"आप एसिडिटी, सीने में जलन और एसिड रिफ्लक्स की समस्या से कितने मुक्त रहते हैं?",hintEn:"Consider how often you experience these symptoms.",hintHi:"इन लक्षणों के होने की आवृत्ति पर विचार करें।",opts:[
+["I experience acidity, heartburn, or acid reflux very frequently.","मुझे बहुत बार एसिडिटी, सीने में जलन या एसिड रिफ्लक्स होता है।",1],
+["I frequently experience acidity or heartburn.","मुझे अक्सर एसिडिटी या सीने में जलन होती है।",3],
+["I occasionally experience acidity or heartburn.","मुझे कभी-कभी एसिडिटी या सीने में जलन होती है।",5],
+["I rarely experience acidity or heartburn.","मुझे बहुत कम एसिडिटी या सीने में जलन होती है।",8],
+["I never experience acidity, heartburn, or acid reflux.","मुझे कभी भी एसिडिटी, सीने में जलन या एसिड रिफ्लक्स नहीं होता।",10]]},
+{en:"How clean and pink is your tongue without a thick coating?",hi:"आपकी जीभ मोटी परत के बिना कितनी साफ और गुलाबी रहती है?",hintEn:"Observe your tongue’s usual appearance.",hintHi:"अपनी जीभ के सामान्य रूप पर ध्यान दें।",opts:[
+["My tongue frequently has a thick coating and appears unhealthy.","मेरी जीभ पर अक्सर मोटी परत रहती है और वह अस्वस्थ दिखाई देती है।",1],
+["My tongue usually has a noticeable coating.","मेरी जीभ पर सामान्यतः स्पष्ट परत रहती है।",3],
+["My tongue sometimes appears clean, but a coating regularly appears.","मेरी जीभ कभी साफ रहती है, लेकिन नियमित रूप से परत दिखाई देती है।",5],
+["My tongue is mostly clean and pink, with occasional coating.","मेरी जीभ अधिकांशतः साफ और गुलाबी रहती है; कभी-कभी परत होती है।",8],
+["My tongue is consistently clean and pink without any coating.","मेरी जीभ हमेशा साफ और गुलाबी रहती है, बिना किसी परत के।",10]]},
+{en:"How light, fresh and energetic does your body generally feel?",hi:"आपका शरीर सामान्यतः कितना हल्का, तरोताज़ा और ऊर्जावान महसूस होता है?",hintEn:"Think about your usual feeling of heaviness or freshness during the day.",hintHi:"दिन के दौरान शरीर में सामान्य भारीपन या ताज़गी के अनुभव पर विचार करें।",opts:[
+["My body frequently feels heavy, sluggish and exhausted.","मेरा शरीर अक्सर भारी, सुस्त और थका हुआ महसूस होता है।",1],
+["I often feel heaviness and low energy.","मुझे अक्सर भारीपन और कम ऊर्जा महसूस होती है।",3],
+["I sometimes feel light and fresh, but heaviness also occurs.","कभी हल्कापन और ताज़गी महसूस होती है, लेकिन भारीपन भी होता है।",5],
+["I mostly feel light, fresh and energetic.","मैं अधिकांशतः हल्का, तरोताज़ा और ऊर्जावान महसूस करता/करती हूँ।",8],
+["I consistently feel light, fresh and energetic throughout the day.","मैं पूरे दिन हमेशा हल्का, तरोताज़ा और ऊर्जावान महसूस करता/करती हूँ।",10]]},
+{en:"How healthy and balanced is your appetite?",hi:"आपकी भूख कितनी स्वस्थ और संतुलित है?",hintEn:"Consider your usual appetite pattern.",hintHi:"अपनी सामान्य भूख के पैटर्न पर विचार करें।",opts:[
+["My appetite is very poor or highly irregular.","मेरी भूख बहुत कम या अत्यधिक अनियमित रहती है।",1],
+["My appetite is often low, excessive or irregular.","मेरी भूख अक्सर कम, बहुत अधिक या अनियमित रहती है।",3],
+["My appetite is moderately balanced, with occasional irregularity.","मेरी भूख कुछ हद तक संतुलित है, लेकिन कभी-कभी अनियमित रहती है।",5],
+["My appetite is mostly healthy and balanced.","मेरी भूख अधिकांशतः स्वस्थ और संतुलित रहती है।",8],
+["My appetite is consistently healthy, balanced and appropriate.","मेरी भूख हमेशा स्वस्थ, संतुलित और उचित रहती है।",10]]},
+{en:"How frequently do you experience unpleasant breath or body odour, even after maintaining regular personal hygiene?",hi:"नियमित व्यक्तिगत स्वच्छता बनाए रखने के बावजूद आपको कितनी बार सांसों या शरीर से अप्रिय दुर्गंध की समस्या होती है?",hintEn:"Consider both breath odour and body odour.",hintHi:"सांसों और शरीर दोनों की दुर्गंध पर विचार करें।",opts:[
+["I frequently experience unpleasant breath or body odour.","मुझे अक्सर सांसों या शरीर से अप्रिय दुर्गंध आती है।",1],
+["I experience unpleasant breath or body odour on many days.","मुझे कई दिनों में सांसों या शरीर से अप्रिय दुर्गंध आती है।",3],
+["I occasionally experience unpleasant breath or body odour.","मुझे कभी-कभी सांसों या शरीर से अप्रिय दुर्गंध आती है।",5],
+["I rarely experience unpleasant breath or body odour.","मुझे बहुत कम सांसों या शरीर से अप्रिय दुर्गंध आती है।",8],
+["I never experience unpleasant breath or body odour.","मुझे कभी भी सांसों या शरीर से अप्रिय दुर्गंध नहीं आती है।",10]]}
+];
+let lang='en', index=0, answers=Array(questions.length).fill(null);
+function setLang(l){lang=l;document.getElementById('enBtn').classList.toggle('active',l==='en');document.getElementById('hiBtn').classList.toggle('active',l==='hi');
+document.getElementById('intro').textContent=l==='en'?'Reflect on your current condition and select the answer that best describes your usual experience.':'अपनी वर्तमान स्थिति पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।';
+document.getElementById('instruction').textContent=l==='en'?'Each question has five options. Select one answer for every question. Your total score is out of 100.':'हर प्रश्न के पाँच विकल्प हैं। प्रत्येक प्रश्न के लिए एक उत्तर चुनें। आपका कुल स्कोर 100 में से होगा।';
+document.getElementById('disclaimer').textContent=l==='en'?'This is a wellness self-assessment tool, not a medical diagnosis. Symptoms can have many causes. Seek advice from a qualified healthcare professional for persistent or concerning symptoms.':'यह स्वास्थ्य-जागरूकता के लिए स्व-मूल्यांकन है, चिकित्सा निदान नहीं। लक्षणों के कई कारण हो सकते हैं। लगातार या चिंताजनक लक्षणों के लिए योग्य स्वास्थ्य पेशेवर से सलाह लें।';
+document.getElementById('startBtn').textContent=l==='en'?'Start Assessment →':'मूल्यांकन शुरू करें →';
+if(!document.getElementById('quiz').classList.contains('hidden'))render();}
+function start(){index=0;answers=Array(questions.length).fill(null);document.getElementById('welcome').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');render();}
+function render(){let q=questions[index];document.getElementById('progressText').textContent=lang==='en'?`Question ${index+1} of ${questions.length}`:`प्रश्न ${index+1} / ${questions.length}`;
+document.getElementById('answeredText').textContent=lang==='en'?`Answered: ${answers.filter(x=>x!==null).length}/${questions.length}`:`उत्तर दिए: ${answers.filter(x=>x!==null).length}/${questions.length}`;
+document.getElementById('bar').style.width=((index+1)/questions.length*100)+'%';document.getElementById('qnum').textContent=lang==='en'?`QUESTION ${index+1}`:`प्रश्न ${index+1}`;
+document.getElementById('question').textContent=q.en;document.getElementById('questionHindi').textContent=q.hi;document.getElementById('hint').textContent=lang==='en'?q.hintEn:q.hintHi;
+const opts=document.getElementById('options');opts.innerHTML='';q.opts.forEach((o,i)=>{let b=document.createElement('button');b.className='option'+(answers[index]===i?' selected':'');b.innerHTML=`<span class="scorepill">${o[2]}</span><span class="opttext">${o[0]}<span class="optHindi">${o[1]}</span></span>`;b.onclick=()=>{answers[index]=i;render();};opts.appendChild(b);});
+document.getElementById('backBtn').textContent=lang==='en'?'← Back':'← पीछे';document.getElementById('backBtn').disabled=index===0;
+document.getElementById('nextBtn').textContent=index===questions.length-1?(lang==='en'?'View Score':'स्कोर देखें'):(lang==='en'?'Next →':'आगे →');document.getElementById('nextBtn').disabled=answers[index]===null;}
+function back(){if(index>0){index--;render();}}
+function next(){if(answers[index]===null)return;if(index<questions.length-1){index++;render();}else showResult();}
+function showResult(){let total=answers.reduce((sum,a,i)=>sum+questions[i].opts[a][2],0);document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('total').textContent=total;
+let band,msg;if(total>=90){band=lang==='en'?'Excellent': 'उत्कृष्ट';msg=lang==='en'?'Your self-reported score is in the excellent range. Continue to observe your wellbeing habits.':'आपका स्व-मूल्यांकन स्कोर उत्कृष्ट श्रेणी में है। अपनी स्वास्थ्य आदतों पर ध्यान बनाए रखें।';}
+else if(total>=80){band=lang==='en'?'Very Good':'बहुत अच्छा';msg=lang==='en'?'Your self-reported score is in the very good range.':'आपका स्व-मूल्यांकन स्कोर बहुत अच्छी श्रेणी में है।';}
+else if(total>=70){band=lang==='en'?'Good':'अच्छा';msg=lang==='en'?'Your self-reported score is in the good range.':'आपका स्व-मूल्यांकन स्कोर अच्छी श्रेणी में है।';}
+else if(total>=60){band=lang==='en'?'Fair':'संतोषजनक';msg=lang==='en'?'Some responses suggest areas you may wish to reflect on.':'कुछ उत्तर ऐसे क्षेत्रों की ओर संकेत करते हैं जिन पर आप विचार कर सकते हैं।';}
+else if(total>=40){band=lang==='en'?'Needs Improvement':'सुधार की आवश्यकता';msg=lang==='en'?'Your responses suggest several symptoms or concerns. Consider discussing persistent symptoms with a healthcare professional.':'आपके उत्तर कई लक्षणों या चिंताओं की ओर संकेत करते हैं। लगातार लक्षणों के लिए स्वास्थ्य पेशेवर से चर्चा करें।';}
+else{band=lang==='en'?'Poor':'कम';msg=lang==='en'?'Your responses indicate notable symptom concerns. Consider seeking guidance from a qualified healthcare professional.':'आपके उत्तर उल्लेखनीय लक्षणों की चिंताओं की ओर संकेत करते हैं। योग्य स्वास्थ्य पेशेवर से मार्गदर्शन लेने पर विचार करें।';}
+document.getElementById('band').textContent=band;document.getElementById('resultMessage').textContent=msg;document.getElementById('resultTitle').textContent=lang==='en'?'YOUR DRALT DETOX HEALTH SCORE':'आपका DRALT DETOX HEALTH SCORE';document.getElementById('restartBtn').textContent=lang==='en'?'Restart Assessment':'मूल्यांकन फिर से शुरू करें';document.getElementById('resultDisclaimer').textContent=lang==='en'?'This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.':'यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षणों या चिंताओं के लिए योग्य स्वास्थ्य पेशेवर से चर्चा करें।';}
+function restart(){document.getElementById('result').classList.add('hidden');document.getElementById('welcome').classList.remove('hidden');}
+</script>
+</body>
+</html>
