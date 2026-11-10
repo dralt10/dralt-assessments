@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALT Diet Habit Score</title>
+<style>
+  :root {
+    --brand: #ae275f;
+    --brand-dark: #861b48;
+    --brand-light: #fff1f6;
+    --text: #24212a;
+    --muted: #5f5965;
+    --border: #e8dce2;
+    --surface: #ffffff;
+    --page: #fff8fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font-family: Arial, "Noto Sans Devanagari", "Mangal", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .wrap {
+    width: min(100% - 28px, 850px);
+    margin: 0 auto;
+    padding: 24px 0 40px;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: white;
+    padding: 28px 22px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    margin: 0 0 8px;
+    font-size: clamp(27px, 5vw, 36px);
+    line-height: 1.25;
+    font-weight: 800;
+  }
+  .header .subtitle {
+    font-size: clamp(18px, 3.5vw, 22px);
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .header .meta {
+    font-size: 17px;
+    margin: 10px 0 0;
+    opacity: .96;
+  }
+  .intro, .question, .result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px rgba(105, 35, 65, .045);
+  }
+  .intro p { margin: 0 0 8px; font-size: 18px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .q-heading {
+    color: var(--brand);
+    font-size: clamp(21px, 4vw, 25px);
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 0 0 12px;
+  }
+  .q-en {
+    font-size: clamp(19px, 3.6vw, 21px);
+    font-weight: 700;
+    line-height: 1.55;
+    margin: 0 0 9px;
+  }
+  .q-hi {
+    font-size: clamp(18px, 3.4vw, 20px);
+    line-height: 1.7;
+    margin: 0 0 18px;
+    color: #39333e;
+  }
+  .options { display: grid; gap: 11px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1.5px solid #e5d8df;
+    background: #fff;
+    border-radius: 12px;
+    padding: 13px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .option:hover { border-color: var(--brand); background: #fff9fc; }
+  .option.selected { border-color: var(--brand); background: var(--brand-light); }
+  .option input {
+    flex: 0 0 auto;
+    margin-top: 6px;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--brand);
+  }
+  .option-text {
+    font-size: clamp(17px, 3.3vw, 19px);
+    line-height: 1.55;
+  }
+  .option-hi {
+    display: block;
+    margin-top: 4px;
+    color: #4c4550;
+    font-size: clamp(16px, 3.2vw, 18px);
+    line-height: 1.65;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 24px 0; }
+  button {
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 24px;
+    min-height: 50px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .primary { background: var(--brand); color: white; }
+  .primary:hover { background: var(--brand-dark); }
+  .secondary { background: #f0e7ec; color: #3c2933; }
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: 9px 0;
+    background: rgba(255,248,251,.95);
+    backdrop-filter: blur(5px);
+    margin-bottom: 14px;
+  }
+  .progress-track { height: 8px; background: #eadde4; border-radius: 20px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0; background: var(--brand); transition: width .2s; }
+  .progress-label { text-align: center; font-size: 16px; font-weight: 700; color: var(--muted); margin-top: 5px; }
+  .result { text-align: center; display: none; }
+  .score { font-size: clamp(42px, 9vw, 60px); font-weight: 900; color: var(--brand); line-height: 1.2; margin: 10px 0; }
+  .level { font-size: 25px; font-weight: 800; margin: 8px 0; }
+  .result p { font-size: 18px; line-height: 1.65; }
+  .notice { color: var(--muted); font-size: 16px !important; }
+  .scale { margin: 18px auto 0; max-width: 520px; text-align: left; border-collapse: collapse; width: 100%; font-size: 17px; }
+  .scale th, .scale td { border: 1px solid var(--border); padding: 9px 11px; }
+  .scale th { background: var(--brand-light); }
+  .error { display:none; color:#a01940; text-align:center; font-weight:700; font-size:18px; margin:10px 0; }
+  @media (max-width: 520px) {
+    .wrap { width: min(100% - 18px, 850px); padding-top: 12px; }
+    .header { padding: 23px 15px; border-radius: 15px; }
+    .intro, .question, .result { padding: 17px 15px; }
+    .option { padding: 12px 11px; gap: 10px; }
+    body { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <h1>DRALT Diet Habit Score</h1>
+    <div class="subtitle">Diet Habits &amp; Food Practices</div>
+    <div class="subtitle">आहार आदतें और भोजन संबंधी अभ्यास</div>
+    <p class="meta">10 Questions · Maximum Score: 100</p>
+  </header>
+
+  <section class="intro">
+    <p><strong>Instructions:</strong> Select one answer that best describes your usual experience for each question.</p>
+    <p><strong>निर्देश:</strong> हर प्रश्न के लिए वह एक उत्तर चुनें जो आपके सामान्य अनुभव को सबसे अच्छी तरह दर्शाता है।</p>
+    <p>Each question carries up to 10 marks. Answer options are displayed without marks.</p>
+    <p>हर प्रश्न के अधिकतम 10 अंक हैं। उत्तर विकल्पों में अंक नहीं दिखाए गए हैं।</p>
+  </section>
+
+  <div class="progress" aria-live="polite">
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">0 of 10 answered</div>
+  </div>
+
+  <form id="assessment">
+    <div id="questions"></div>
+    <div class="error" id="error">Please answer all 10 questions before viewing your score.<br>कृपया स्कोर देखने से पहले सभी 10 प्रश्नों के उत्तर दें।</div>
+    <div class="actions">
+      <button type="submit" class="primary">View My Score · मेरा स्कोर देखें</button>
+    </div>
+  </form>
+
+  <section class="result" id="result" aria-live="polite">
+    <h2 class="q-heading">Your DRALT Diet Habit Score</h2>
+    <div class="score" id="score"></div>
+    <div class="level" id="level"></div>
+    <p id="resultText"></p>
+    <table class="scale">
+      <thead><tr><th>Score</th><th>Assessment Level</th></tr></thead>
+      <tbody>
+        <tr><td>20–39</td><td>Needs Major Diet Habit Improvement</td></tr>
+        <tr><td>40–59</td><td>Needs Diet Habit Improvement</td></tr>
+        <tr><td>60–79</td><td>Moderate Diet Habits</td></tr>
+        <tr><td>80–89</td><td>Healthy Diet Habits</td></tr>
+        <tr><td>90–100</td><td>Excellent Diet Habits</td></tr>
+      </tbody>
+    </table>
+    <p class="notice">This is a diet-habit self-assessment, not a medical diagnosis or individualized nutrition plan. A fruitarian or restrictive eating pattern may not be suitable for everyone; consider nutritional adequacy and consult a qualified professional when needed.</p>
+    <p class="notice">यह आहार आदतों का स्वयं-आकलन है, चिकित्सा निदान या व्यक्तिगत पोषण योजना नहीं। फलाहारी या प्रतिबंधात्मक आहार सभी के लिए उपयुक्त नहीं हो सकता; आवश्यकता होने पर योग्य विशेषज्ञ से सलाह लें।</p>
+    <div class="actions">
+      <button type="button" class="secondary" id="restart">Restart Assessment · दोबारा शुरू करें</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const questions = [
+  {
+    "heading": "Q1. Greens — हरी पत्तियाँ",
+    "en": "How regularly do you consume raw green leaves (juice or chutney) in an appropriate quantity?",
+    "hi": "आप उचित मात्रा में कच्ची हरी पत्तियाँ (जूस या चटनी) कितनी नियमितता से लेते हैं?",
+    "options": [
+      [
+        "I consume raw green leaves daily in an appropriate quantity.",
+        "मैं उचित मात्रा में रोज़ कच्ची हरी पत्तियाँ लेता/लेती हूँ।"
+      ],
+      [
+        "I consume raw green leaves 5–6 days a week.",
+        "मैं सप्ताह में 5–6 दिन कच्ची हरी पत्तियाँ लेता/लेती हूँ।"
+      ],
+      [
+        "I consume raw green leaves 3–4 days a week.",
+        "मैं सप्ताह में 3–4 दिन कच्ची हरी पत्तियाँ लेता/लेती हूँ।"
+      ],
+      [
+        "I consume raw green leaves 1–2 days a week.",
+        "मैं सप्ताह में 1–2 दिन कच्ची हरी पत्तियाँ लेता/लेती हूँ।"
+      ],
+      [
+        "I rarely or never consume raw green leaves.",
+        "मैं बहुत कम या कभी भी कच्ची हरी पत्तियाँ नहीं लेता/लेती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q2. Fresh Fruits — ताज़े फल",
+    "en": "How regularly do you consume fresh seasonal fruits in an appropriate quantity?",
+    "hi": "आप उचित मात्रा में ताज़े मौसमी फल कितनी नियमितता से खाते हैं?",
+    "options": [
+      [
+        "I rarely or never consume fresh seasonal fruits.",
+        "मैं बहुत कम या कभी भी ताज़े मौसमी फल नहीं खाता/खाती हूँ।"
+      ],
+      [
+        "I consume fresh seasonal fruits 3–5 days a week.",
+        "मैं सप्ताह में 3–5 दिन ताज़े मौसमी फल खाता/खाती हूँ।"
+      ],
+      [
+        "I consume fresh seasonal fruits daily, but not as fruit-only meals.",
+        "मैं रोज़ ताज़े मौसमी फल खाता/खाती हूँ, लेकिन केवल फल वाला भोजन नहीं।"
+      ],
+      [
+        "I consume 2 or more fruit-only meals daily.",
+        "मैं रोज़ 2 या अधिक केवल फलों वाले भोजन लेता/लेती हूँ।"
+      ],
+      [
+        "I am a fruitarian. I eat only fruits.",
+        "मैं फलाहारी हूँ। मैं केवल फल खाता/खाती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q3. Fresh Salads — ताज़ा सलाद",
+    "en": "How often do you consume fresh salads in appropriate portions?",
+    "hi": "आप उचित मात्रा में ताज़ा सलाद कितनी बार खाते हैं?",
+    "options": [
+      [
+        "I consume fresh salads daily in appropriate portions.",
+        "मैं उचित मात्रा में रोज़ ताज़ा सलाद खाता/खाती हूँ।"
+      ],
+      [
+        "I consume fresh salads 5–6 days a week.",
+        "मैं सप्ताह में 5–6 दिन ताज़ा सलाद खाता/खाती हूँ।"
+      ],
+      [
+        "I consume fresh salads 3–4 days a week.",
+        "मैं सप्ताह में 3–4 दिन ताज़ा सलाद खाता/खाती हूँ।"
+      ],
+      [
+        "I consume fresh salads 1–2 days a week.",
+        "मैं सप्ताह में 1–2 दिन ताज़ा सलाद खाता/खाती हूँ।"
+      ],
+      [
+        "I rarely or never consume fresh salads.",
+        "मैं बहुत कम या कभी भी ताज़ा सलाद नहीं खाता/खाती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q4. Sprouts — अंकुरित अनाज",
+    "en": "How regularly do you follow the Rotational Focus Method (RFM) and Quantity Control Rule for sprouts?",
+    "hi": "आप अंकुरित अनाज के लिए Rotational Focus Method (RFM) और Quantity Control Rule का पालन कितनी नियमितता से करते हैं?",
+    "options": [
+      [
+        "I rarely or never follow RFM and quantity control for sprouts.",
+        "मैं अंकुरित अनाज के लिए RFM और मात्रा नियंत्रण का बहुत कम या कभी पालन नहीं करता/करती हूँ।"
+      ],
+      [
+        "I follow these principles sometimes, but occasionally consume excess quantity or lack rotation.",
+        "मैं कभी-कभी इन सिद्धांतों का पालन करता/करती हूँ, लेकिन कभी मात्रा अधिक हो जाती है या रोटेशन नहीं करता/करती हूँ।"
+      ],
+      [
+        "I follow RFM and quantity control most of the time.",
+        "मैं अधिकतर समय RFM और मात्रा नियंत्रण का पालन करता/करती हूँ।"
+      ],
+      [
+        "I consistently follow RFM and quantity control, rotating sprouts and consuming an appropriate quantity.",
+        "मैं RFM और मात्रा नियंत्रण का नियमित पालन करता/करती हूँ, अंकुरित अनाज को बदल-बदलकर उचित मात्रा में लेता/लेती हूँ।"
+      ],
+      [
+        "I am a fruitarian. I don’t eat sprouts.",
+        "मैं फलाहारी हूँ। मैं अंकुरित अनाज नहीं खाता/खाती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q5. Seeds & Nuts — बीज और मेवे",
+    "en": "How regularly do you follow RFM and the Quantity Control Rule for seeds and nuts (peanuts, coconut, sesame, flax, sunflower, or pumpkin seeds)?",
+    "hi": "आप मूँगफली, नारियल, तिल, अलसी, सूरजमुखी या कद्दू के बीज आदि के लिए RFM और मात्रा नियंत्रण नियम का कितनी नियमितता से पालन करते हैं?",
+    "options": [
+      [
+        "I rarely or never follow RFM and quantity control for seeds and nuts.",
+        "मैं बीज और मेवों के लिए RFM और मात्रा नियंत्रण का बहुत कम या कभी पालन नहीं करता/करती हूँ।"
+      ],
+      [
+        "I sometimes follow these principles, but occasionally consume excess quantities or combine several types.",
+        "मैं कभी-कभी इन सिद्धांतों का पालन करता/करती हूँ, लेकिन कभी मात्रा अधिक या कई प्रकार एक साथ लेता/लेती हूँ।"
+      ],
+      [
+        "I follow RFM and quantity control most of the time.",
+        "मैं अधिकतर समय RFM और मात्रा नियंत्रण का पालन करता/करती हूँ।"
+      ],
+      [
+        "I consistently follow RFM and quantity control, rotating seeds and nuts and consuming appropriate quantities.",
+        "मैं RFM और मात्रा नियंत्रण का नियमित पालन करता/करती हूँ, बीज और मेवों को बदल-बदलकर उचित मात्रा में लेता/लेती हूँ।"
+      ],
+      [
+        "I am a fruitarian. I don’t eat seeds & nuts.",
+        "मैं फलाहारी हूँ। मैं बीज और मेवे नहीं खाता/खाती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q6. Grains & Millets — अनाज और मिलेट्स",
+    "en": "How regularly do you follow RFM and the Quantity Control Rule for grains and millets, while choosing healthy varieties of unpolished grains or millets?",
+    "hi": "स्वस्थ, बिना पॉलिश किए अनाज या मिलेट्स चुनते हुए, आप अनाज और मिलेट्स के लिए RFM तथा मात्रा नियंत्रण नियम का कितनी नियमितता से पालन करते हैं?",
+    "options": [
+      [
+        "I rarely or never follow RFM or quantity control, and mostly choose polished grains.",
+        "मैं RFM या मात्रा नियंत्रण का बहुत कम या कभी पालन नहीं करता/करती हूँ और अधिकतर पॉलिश किए अनाज चुनता/चुनती हूँ।"
+      ],
+      [
+        "I sometimes follow these principles, but occasionally consume excess quantities or polished grains.",
+        "मैं कभी-कभी इन सिद्धांतों का पालन करता/करती हूँ, लेकिन कभी अधिक मात्रा या पॉलिश किए अनाज लेता/लेती हूँ।"
+      ],
+      [
+        "I follow RFM and quantity control most of the time and usually choose unpolished grains or millets.",
+        "मैं अधिकतर समय RFM और मात्रा नियंत्रण का पालन करता/करती हूँ और सामान्यतः बिना पॉलिश किए अनाज या मिलेट्स चुनता/चुनती हूँ।"
+      ],
+      [
+        "I consistently follow RFM and quantity control, and choose appropriate quantities of healthy unpolished grains or millets.",
+        "मैं RFM और मात्रा नियंत्रण का नियमित पालन करता/करती हूँ तथा स्वस्थ बिना पॉलिश किए अनाज या मिलेट्स उचित मात्रा में चुनता/चुनती हूँ।"
+      ],
+      [
+        "I am a fruitarian. I don’t eat grains & millets.",
+        "मैं फलाहारी हूँ। मैं अनाज और मिलेट्स नहीं खाता/खाती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q7. Chewing Habit — चबाने की आदत",
+    "en": "How well do you chew your food thoroughly before swallowing?",
+    "hi": "निगलने से पहले आप भोजन को कितनी अच्छी तरह चबाते हैं?",
+    "options": [
+      [
+        "I always chew my food thoroughly before swallowing.",
+        "मैं निगलने से पहले भोजन को हमेशा अच्छी तरह चबाता/चबाती हूँ।"
+      ],
+      [
+        "I chew thoroughly most of the time.",
+        "मैं अधिकतर समय भोजन अच्छी तरह चबाता/चबाती हूँ।"
+      ],
+      [
+        "I chew adequately, but sometimes swallow quickly.",
+        "मैं पर्याप्त चबाता/चबाती हूँ, लेकिन कभी-कभी जल्दी निगल लेता/लेती हूँ।"
+      ],
+      [
+        "I often eat quickly with insufficient chewing.",
+        "मैं अक्सर कम चबाकर जल्दी भोजन करता/करती हूँ।"
+      ],
+      [
+        "I usually swallow my food without chewing it thoroughly.",
+        "मैं आमतौर पर भोजन को अच्छी तरह चबाए बिना निगल लेता/लेती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q8. Junk Foods — जंक और प्रोसेस्ड फूड",
+    "en": "How well do you avoid processed foods, sugary foods, and unhealthy snacks?",
+    "hi": "आप प्रोसेस्ड फूड, मीठे खाद्य पदार्थों और अस्वस्थ स्नैक्स से कितनी अच्छी तरह बचते हैं?",
+    "options": [
+      [
+        "I completely avoid processed foods, sugary foods, and unhealthy snacks.",
+        "मैं प्रोसेस्ड फूड, मीठे खाद्य पदार्थों और अस्वस्थ स्नैक्स से पूरी तरह बचता/बचती हूँ।"
+      ],
+      [
+        "I avoid them almost completely, with rare exceptions.",
+        "मैं बहुत कम अपवादों के साथ लगभग पूरी तरह इनसे बचता/बचती हूँ।"
+      ],
+      [
+        "I consume them occasionally.",
+        "मैं कभी-कभी इनका सेवन करता/करती हूँ।"
+      ],
+      [
+        "I consume them several times a week.",
+        "मैं सप्ताह में कई बार इनका सेवन करता/करती हूँ।"
+      ],
+      [
+        "I consume them daily or very frequently.",
+        "मैं रोज़ या बहुत बार इनका सेवन करता/करती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q9. Mindful Eating — सजग होकर भोजन",
+    "en": "How calmly and consciously do you eat without using a mobile phone, watching TV, or other distractions?",
+    "hi": "मोबाइल, टीवी या अन्य ध्यान भटकाने वाली चीज़ों के बिना आप कितनी शांति और सजगता से भोजन करते हैं?",
+    "options": [
+      [
+        "I always eat calmly and consciously without any distractions.",
+        "मैं हमेशा बिना किसी व्यवधान के शांत और सजग होकर भोजन करता/करती हूँ।"
+      ],
+      [
+        "I eat mindfully most of the time.",
+        "मैं अधिकतर समय सजग होकर भोजन करता/करती हूँ।"
+      ],
+      [
+        "I eat mindfully sometimes, but often have distractions.",
+        "मैं कभी-कभी सजग होकर भोजन करता/करती हूँ, लेकिन अक्सर ध्यान भटकता है।"
+      ],
+      [
+        "I frequently eat while using my mobile or watching TV.",
+        "मैं अक्सर मोबाइल चलाते या टीवी देखते हुए भोजन करता/करती हूँ।"
+      ],
+      [
+        "I almost always eat with distractions.",
+        "मैं लगभग हमेशा ध्यान भटकने के साथ भोजन करता/करती हूँ।"
+      ]
+    ]
+  },
+  {
+    "heading": "Q10. Intermittent Eating — भोजन का समय-अंतराल",
+    "en": "What is your daily eating window duration (the time between your first and last food intake)?",
+    "hi": "आपका दैनिक eating window कितने समय का है (पहले और आखिरी भोजन के बीच का समय)?",
+    "options": [
+      [
+        "My eating window is 4 hours or less.",
+        "मेरा eating window 4 घंटे या उससे कम है।"
+      ],
+      [
+        "My eating window is more than 4 hours and up to 6 hours.",
+        "मेरा eating window 4 घंटे से अधिक और 6 घंटे तक है।"
+      ],
+      [
+        "My eating window is more than 6 hours and up to 8 hours.",
+        "मेरा eating window 6 घंटे से अधिक और 8 घंटे तक है।"
+      ],
+      [
+        "My eating window is more than 8 hours and up to 10 hours.",
+        "मेरा eating window 8 घंटे से अधिक और 10 घंटे तक है।"
+      ],
+      [
+        "My eating window is more than 10 hours.",
+        "मेरा eating window 10 घंटे से अधिक है।"
+      ]
+    ]
+  }
+];
+
+const scoreValues = [2, 4, 6, 8, 10];
+const questionContainer = document.getElementById("questions");
+
+questions.forEach((q, index) => {
+  const section = document.createElement("section");
+  section.className = "question";
+  section.innerHTML = `
+    <h2 class="q-heading">${q.heading}</h2>
+    <p class="q-en">${q.en}</p>
+    <p class="q-hi">${q.hi}</p>
+    <div class="options" role="radiogroup" aria-label="${q.heading}">
+      ${q.options.map((option, optIndex) => `
+        <label class="option">
+          <input type="radio" name="q${index}" value="${scoreValues[optIndex]}" required>
+          <span class="option-text">${option[0]}<span class="option-hi">${option[1]}</span></span>
+        </label>
+      `).join("")}
+    </div>
+  `;
+  questionContainer.appendChild(section);
+});
+
+function updateProgress() {
+  const answered = questions.reduce((count, q, i) =>
+    count + (document.querySelector(`input[name="q${i}"]:checked`) ? 1 : 0), 0);
+  document.getElementById("progressBar").style.width = `${answered * 10}%`;
+  document.getElementById("progressLabel").textContent = `${answered} of 10 answered · ${answered} में से 10 उत्तर`;
+}
+document.querySelectorAll('input[type="radio"]').forEach(input => {
+  input.addEventListener("change", () => {
+    document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
+      radio.closest(".option").classList.toggle("selected", radio.checked);
+    });
+    updateProgress();
+    document.getElementById("error").style.display = "none";
+  });
+});
+
+document.getElementById("assessment").addEventListener("submit", event => {
+  event.preventDefault();
+  const answers = questions.map((q, i) => document.querySelector(`input[name="q${i}"]:checked`));
+  if (answers.some(answer => !answer)) {
+    document.getElementById("error").style.display = "block";
+    const firstMissing = answers.findIndex(answer => !answer);
+    document.querySelectorAll(".question")[firstMissing].scrollIntoView({behavior: "smooth", block: "center"});
+    return;
+  }
+  const total = answers.reduce((sum, answer) => sum + Number(answer.value), 0);
+  let level, message;
+  if (total <= 39) {
+    level = "Needs Major Diet Habit Improvement";
+    message = "Your responses indicate that your diet habits may benefit from focused improvement. Consider making gradual, sustainable changes and seek qualified nutrition guidance when needed.";
+  } else if (total <= 59) {
+    level = "Needs Diet Habit Improvement";
+    message = "Your responses indicate that several diet habits may benefit from improvement.";
+  } else if (total <= 79) {
+    level = "Moderate Diet Habits";
+    message = "Your responses indicate a moderate level of diet-habit consistency.";
+  } else if (total <= 89) {
+    level = "Healthy Diet Habits";
+    message = "Your responses indicate generally healthy diet habits.";
+  } else {
+    level = "Excellent Diet Habits";
+    message = "Your responses indicate excellent consistency across these self-assessed diet habits.";
+  }
+  document.getElementById("score").textContent = `${total} / 100`;
+  document.getElementById("level").textContent = level;
+  document.getElementById("resultText").textContent = message;
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").scrollIntoView({behavior: "smooth", block: "start"});
+});
+
+document.getElementById("restart").addEventListener("click", () => {
+  document.getElementById("assessment").reset();
+  document.querySelectorAll(".option").forEach(option => option.classList.remove("selected"));
+  document.getElementById("result").style.display = "none";
+  document.getElementById("error").style.display = "none";
+  updateProgress();
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+</script>
+</body>
+</html>
