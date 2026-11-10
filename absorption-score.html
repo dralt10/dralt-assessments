@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALT Absorption Health Score Test</title>
+<style>
+:root{--magenta:#ae275f;--magenta-dark:#861b47;--soft:#fff1f6;--ink:#25212a;--muted:#6b6570;--line:#eadde4;--green:#287a53}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#fff7fa,#f7f4f8);font-family:Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.55}
+.wrap{max-width:850px;margin:28px auto;padding:0 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,36px);box-shadow:0 10px 30px rgba(80,30,55,.07)}
+.brand{text-align:center;color:var(--magenta);font-weight:800;letter-spacing:2px;font-size:14px}
+h1{text-align:center;color:var(--magenta-dark);font-size:clamp(25px,5vw,34px);margin:8px 0}
+.subtitle{text-align:center;color:var(--muted);margin:0 0 24px}
+.bilingual{border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0;background:#fffafd}
+.bilingual .hi{margin-top:9px;color:#514653}
+.note{font-size:13px;color:var(--muted);background:#faf7f9;padding:12px;border-radius:10px}
+button{border:0;border-radius:12px;padding:13px 20px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:var(--magenta);color:#fff;width:100%;margin-top:18px}
+.primary:hover{background:var(--magenta-dark)}
+.progressrow{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin-bottom:8px}
+.progress{height:8px;background:#f0e5eb;border-radius:99px;overflow:hidden;margin-bottom:22px}
+.bar{height:100%;background:var(--magenta);width:0%;transition:width .2s}
+.qtitle{font-size:20px;font-weight:750;margin-bottom:5px}
+.hindi{color:#594b56;margin-bottom:18px}
+.options{display:grid;gap:10px}
+.option{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:12px;padding:13px;cursor:pointer;transition:.15s}
+.option:hover{border-color:var(--magenta);background:var(--soft)}
+.option input{margin-top:5px;accent-color:var(--magenta);transform:scale(1.15)}
+.option.selected{border-color:var(--magenta);background:var(--soft)}
+.opttext{font-weight:600}.opthi{color:var(--muted);font-size:14px}
+.nav{display:flex;gap:10px;margin-top:20px}.nav button{flex:1}
+.secondary{background:#f1e9ee;color:var(--magenta-dark)}
+.result{text-align:center}
+.score{font-size:58px;font-weight:800;color:var(--magenta);line-height:1.1;margin:16px 0}
+.score small{font-size:20px;color:var(--muted)}
+.level{font-size:22px;font-weight:800;color:var(--magenta-dark)}
+.resultbar{height:14px;background:#f0e5eb;border-radius:99px;margin:20px 0;overflow:hidden}
+.resultbar div{height:100%;background:var(--magenta)}
+.resultgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
+.resultitem{background:#fffafd;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left}
+.resultitem strong{display:block;color:var(--magenta-dark)}
+@media(max-width:560px){.resultgrid{grid-template-columns:1fr}.nav{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card" id="app">
+<div class="brand">DRALT HEALTHUP</div>
+<h1>DRALT Absorption Health Score Test</h1>
+<p class="subtitle">Assess your self-reported digestion, food tolerance and nourishment indicators.<br>अपने पाचन, भोजन सहनशीलता और पोषण संबंधी संकेतकों का आकलन करें।</p>
+<div class="bilingual">
+<strong>Welcome</strong>
+<p>This self-assessment is designed to help you reflect on how comfortably your body digests and tolerates foods, and how nourished you feel.</p>
+<p class="hi"><strong>स्वागत है</strong><br>यह स्व-मूल्यांकन आपको यह समझने में मदद करता है कि आपका शरीर भोजन को कितनी सहजता से पचाता और सहन करता है, तथा आप कितना पोषित महसूस करते हैं।</p>
+</div>
+<div class="bilingual">
+<strong>Instructions</strong>
+<p>Answer all 10 questions based on your usual experience. Choose one answer for each question. Higher scores indicate more favorable self-reported indicators.</p>
+<p class="hi"><strong>निर्देश</strong><br>अपने सामान्य अनुभव के आधार पर सभी 10 प्रश्नों के उत्तर दें। प्रत्येक प्रश्न के लिए एक उत्तर चुनें। अधिक स्कोर बेहतर स्व-रिपोर्ट किए गए संकेतकों को दर्शाता है।</p>
+</div>
+<p class="note">Important: This is a wellness self-assessment, not a medical diagnostic test. Symptoms such as numbness or tingling can have various causes. Seek professional medical evaluation for persistent, worsening or concerning symptoms.<br><br>महत्वपूर्ण: यह एक वेलनेस स्व-मूल्यांकन है, चिकित्सा निदान नहीं। सुन्नपन या झुनझुनी के कई कारण हो सकते हैं। लगातार, बढ़ते हुए या चिंताजनक लक्षणों के लिए योग्य चिकित्सक से जांच कराएं।</p>
+<button class="primary" onclick="startTest()">Start Test | टेस्ट शुरू करें</button>
+</div>
+</div>
+<script>
+const questions = [
+{en:"Digestive Comfort | पाचन की सहजता",q:"How comfortably does your body digest regular meals without heaviness or discomfort?",hi:"आपका शरीर नियमित भोजन को बिना भारीपन या परेशानी के कितनी सहजता से पचाता है?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Bloating & Gas | पेट फूलना एवं गैस",q:"How free are you from frequent bloating, gas or abdominal discomfort?",hi:"आप बार-बार होने वाले पेट फूलने, गैस या पेट की परेशानी से कितने मुक्त रहते हैं?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Bowel Health | मल त्याग का स्वास्थ्य",q:"How comfortable and satisfactory is your bowel movement, without constipation or loose stools?",hi:"कब्ज या पतले मल की परेशानी के बिना आपका मल त्याग कितना सहज और संतोषजनक रहता है?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Sweet Craving | मीठे की क्रेविंग",q:"How intense is your craving for sweets, sugar or sweet foods?",hi:"मीठा, चीनी या मिठाइयाँ खाने की क्रेविंग कितनी तीव्र होती है?",opts:[["Very Intense","बहुत तीव्र"],["Intense","तीव्र"],["Moderate","मध्यम"],["Mild","हल्की"],["Very Little / None","बहुत कम / बिल्कुल नहीं"]]},
+{en:"Oily Food Craving | तेलयुक्त भोजन की क्रेविंग",q:"How intense is your craving for oily, fried or fatty foods?",hi:"तेलयुक्त, तले हुए या फैट वाले खाद्य पदार्थों की क्रेविंग कितनी तीव्र होती है?",opts:[["Very Intense","बहुत तीव्र"],["Intense","तीव्र"],["Moderate","मध्यम"],["Mild","हल्की"],["Very Little / None","बहुत कम / बिल्कुल नहीं"]]},
+{en:"Spicy Food Craving | तीखे भोजन की क्रेविंग",q:"How intense is your craving for spicy or strongly flavored foods?",hi:"तीखे या तेज़ स्वाद वाले खाद्य पदार्थों की क्रेविंग कितनी तीव्र होती है?",opts:[["Very Intense","बहुत तीव्र"],["Intense","तीव्र"],["Moderate","मध्यम"],["Mild","हल्की"],["Very Little / None","बहुत कम / बिल्कुल नहीं"]]},
+{en:"Food Tolerance | भोजन सहनशीलता",q:"How comfortably does your digestive system tolerate fruits, raw salads and healthy raw green vegetables without gas, digestive discomfort or any other unwanted symptoms?",hi:"आपका पाचन तंत्र फलों, कच्चे सलाद और स्वस्थ कच्ची हरी सब्ज़ियों को गैस, पाचन संबंधी परेशानी या किसी अन्य अनचाहे लक्षण के बिना कितनी सहजता से सहन करता है?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Nourishment & Strength | पोषण एवं शक्ति",q:"How adequately nourished and physically strong do you feel in daily life?",hi:"आप दैनिक जीवन में कितना पोषित और शारीरिक रूप से मजबूत महसूस करते हैं?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Hair & Nails Health | बाल एवं नाखूनों का स्वास्थ्य",q:"How healthy and strong do your hair and nails feel, without frequent brittleness or unusual changes?",hi:"बार-बार टूटने या असामान्य बदलाव के बिना आपके बाल और नाखून कितने स्वस्थ और मजबूत महसूस होते हैं?",opts:[["Very Poor","बहुत खराब"],["Poor","खराब"],["Average","सामान्य"],["Good","अच्छा"],["Excellent","उत्कृष्ट"]]},
+{en:"Numbness & Tingling | सुन्नपन एवं झुनझुनी",q:"How frequently do you experience numbness or tingling sensations in your hands, feet or other body parts?",hi:"आपको हाथों, पैरों या शरीर के अन्य हिस्सों में सुन्नपन या झुनझुनी का अनुभव कितनी बार होता है?",opts:[["Very Frequently","बहुत बार"],["Frequently","बार-बार"],["Sometimes","कभी-कभी"],["Rarely","बहुत कम"],["Never","कभी नहीं"]]}
+];
+let answers = Array(questions.length).fill(null), current=0;
+function startTest(){current=0;renderQuestion();}
+function renderQuestion(){
+const q=questions[current];
+const app=document.getElementById("app");
+app.innerHTML=`<div class="brand">DRALT HEALTHUP</div><div class="progressrow"><span>Question ${current+1} of ${questions.length} | प्रश्न ${current+1}/${questions.length}</span><span>${Math.round((current)/questions.length*100)}%</span></div><div class="progress"><div class="bar" style="width:${(current)/questions.length*100}%"></div></div><div class="qtitle">${q.en}</div><div>${q.q}</div><div class="hindi">${q.hi}</div><div class="options">${q.opts.map((o,i)=>`<label class="option ${answers[current]===i?'selected':''}"><input type="radio" name="answer" value="${i}" ${answers[current]===i?'checked':''} onchange="choose(${i})"><span><span class="opttext">${i+1}. ${o[0]}</span><br><span class="opthi">${o[1]}</span></span></label>`).join("")}</div><div class="nav">${current>0?'<button class="secondary" onclick="prev()">Previous | पिछला</button>':''}<button class="primary" style="margin-top:0" onclick="next()">${current===questions.length-1?'See Result | परिणाम देखें':'Next | अगला'}</button></div>`;
+}
+function choose(i){answers[current]=i;renderQuestion();}
+function prev(){if(current>0){current--;renderQuestion();}}
+function next(){if(answers[current]===null){alert("Please select an answer. कृपया एक उत्तर चुनें।");return;}if(current<questions.length-1){current++;renderQuestion();}else showResult();}
+function showResult(){
+const total=answers.reduce((sum,a)=>sum+(a+1),0);
+const pct=Math.round(total/50*100);
+let level,eng,hindi,desc,descHi;
+if(pct>=90){level="Excellent";eng="Your responses indicate very favorable self-reported digestion, food tolerance and nourishment indicators.";hindi="आपके उत्तर पाचन, भोजन सहनशीलता और पोषण के बहुत अनुकूल स्व-रिपोर्ट किए गए संकेत दर्शाते हैं।";descHi="अपने स्वस्थ दिनचर्या को बनाए रखें।"}
+else if(pct>=75){level="Good";eng="Your responses indicate generally favorable indicators, with some areas that may benefit from attention.";hindi="आपके उत्तर सामान्यतः अनुकूल संकेत दर्शाते हैं, कुछ क्षेत्रों पर ध्यान देना उपयोगी हो सकता है।";descHi="कुछ क्षेत्रों में सुधार पर ध्यान दें।"}
+else if(pct>=60){level="Moderate";eng="Your responses indicate mixed indicators. Reflect on the areas with lower scores and consider appropriate support.";hindi="आपके उत्तर मिले-जुले संकेत दर्शाते हैं। कम स्कोर वाले क्षेत्रों पर विचार करें और उचित सहायता लें।";descHi="कम स्कोर वाले क्षेत्रों पर ध्यान दें।"}
+else if(pct>=40){level="Needs Attention";eng="Your responses indicate several areas that may need attention. Consider discussing persistent symptoms with a healthcare professional.";hindi="आपके उत्तर कई ऐसे क्षेत्रों का संकेत देते हैं जिन पर ध्यान देने की आवश्यकता हो सकती है। लगातार लक्षणों के लिए स्वास्थ्य विशेषज्ञ से चर्चा करें।";descHi="लक्षण बने रहें तो स्वास्थ्य विशेषज्ञ से चर्चा करें।"}
+else{level="Priority Attention";eng="Your responses indicate notable concerns in this self-assessment. Consider a professional evaluation, especially for persistent symptoms.";hindi="इस स्व-मूल्यांकन में आपके उत्तर उल्लेखनीय चिंताओं का संकेत देते हैं। विशेषकर लगातार लक्षणों के लिए पेशेवर जांच पर विचार करें।";descHi="पेशेवर जांच पर विचार करें।"}
+document.getElementById("app").innerHTML=`<div class="brand">DRALT HEALTHUP</div><div class="result"><h1>DRALT Absorption Health Score Test</h1><p class="subtitle">Your Result | आपका परिणाम</p><div class="score">${total}<small> / 50</small></div><div class="level">${level}</div><div class="resultbar"><div style="width:${pct}%"></div></div><p><strong>${eng}</strong></p><p class="hindi">${hindi}</p><div class="resultgrid"><div class="resultitem"><strong>Score Percentage | स्कोर प्रतिशत</strong>${pct}%</div><div class="resultitem"><strong>Interpretation | व्याख्या</strong>${level}<br>${descHi}</div></div><p class="note" style="text-align:left;margin-top:20px">This score reflects your answers only. It does not confirm nutrient absorption, gut microbiome composition or any deficiency. A low score or persistent numbness/tingling should be discussed with a qualified healthcare professional.<br><br>यह स्कोर केवल आपके उत्तरों पर आधारित है। यह पोषक तत्वों के अवशोषण, गट माइक्रोबायोम की संरचना या किसी कमी की पुष्टि नहीं करता। कम स्कोर या लगातार सुन्नपन/झुनझुनी के लिए योग्य स्वास्थ्य विशेषज्ञ से चर्चा करें।</p><button class="primary" onclick="location.reload()">Retake Test | फिर से टेस्ट करें</button></div>`;
+}
+</script>
+</body>
+</html>
