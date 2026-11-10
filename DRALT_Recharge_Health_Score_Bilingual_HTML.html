@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRALTathon | Recharge Health Score Assessment</title>
+<style>
+:root{--magenta:#AE275F;--magenta-dark:#861846;--bg:#f8f4f6;--text:#28232a;--muted:#6b6269;--border:#eadde4;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--text);line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+.brand{text-align:center;color:var(--magenta);font-weight:800;letter-spacing:2px;font-size:14px;margin:4px 0 18px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:clamp(20px,5vw,34px);box-shadow:0 8px 28px rgba(70,20,45,.06)}
+h1{font-size:clamp(24px,5vw,32px);line-height:1.25;margin:0 0 10px;color:var(--magenta)}
+h2{font-size:22px;margin:0 0 8px}
+p{margin:8px 0 14px}
+.sub{color:var(--muted)}
+.langs{display:flex;gap:10px;margin:22px 0}
+button{font:inherit;cursor:pointer}
+.lang{flex:1;border:1px solid var(--magenta);border-radius:12px;padding:12px;background:#fff;color:var(--magenta);font-weight:700}
+.lang.active,.primary{background:var(--magenta);color:#fff}
+.primary{border:0;border-radius:12px;padding:13px 20px;font-weight:700;width:100%;margin-top:14px}
+.primary:hover{background:var(--magenta-dark)}
+.notice{font-size:13px;color:var(--muted);background:#fbf7f9;border:1px solid var(--border);padding:12px;border-radius:10px;margin-top:16px}
+.progressrow{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);margin-bottom:8px}
+.track{height:8px;background:#f0e5eb;border-radius:20px;overflow:hidden;margin-bottom:22px}
+.bar{height:100%;background:var(--magenta);width:0;transition:width .2s}
+.qnum{color:var(--magenta);font-weight:800;font-size:13px;letter-spacing:1px;margin-bottom:6px}
+.question{font-size:clamp(19px,4vw,23px);font-weight:700;line-height:1.4;margin-bottom:8px}
+.hindi{font-size:18px;font-weight:600;color:#4d4148;margin:8px 0 12px}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 18px}
+.options{display:grid;gap:10px}
+.option{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;padding:14px;border:1.5px solid var(--border);border-radius:12px;background:#fff;color:var(--text)}
+.option:hover{border-color:var(--magenta)}
+.option.selected{border-color:var(--magenta);background:#fcf2f7;box-shadow:0 0 0 1px var(--magenta)}
+.scorepill{flex:0 0 34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f5e5ed;color:var(--magenta);font-weight:800}
+.opttext{font-size:15px}
+.optHindi{display:block;color:var(--muted);margin-top:4px;font-size:14px}
+.nav{display:flex;gap:10px;margin-top:22px}
+.nav button{flex:1;border-radius:12px;padding:12px;border:1px solid var(--border);font-weight:700;background:#fff;color:var(--text)}
+.nav .next{background:var(--magenta);color:#fff;border-color:var(--magenta)}
+.nav button:disabled{opacity:.4;cursor:not-allowed}
+.result{text-align:center}
+.score{font-size:56px;color:var(--magenta);font-weight:800;line-height:1.2;margin:14px 0}
+.resultband{font-size:22px;font-weight:800;color:var(--magenta)}
+.resultcopy{margin:16px 0}
+.hidden{display:none!important}
+@media(max-width:480px){.wrap{padding:14px 10px 28px}.card{padding:20px 16px}.option{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DRALT HEALTHUP</div>
+  <main class="card" id="welcome">
+    <h1>DRALTathon</h1>
+    <h2>Recharge Health Score Test</h2>
+    <p class="sub" id="intro">Reflect on your current condition and select the answer that best describes your usual experience.<br><span class="hindi">अपनी वर्तमान स्थिति पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।</span></p>
+    <p id="instruction">Each question has five options. Select one answer for every question. Your total score is out of 100.<br><span class="hindi">हर प्रश्न के पाँच विकल्प हैं। प्रत्येक प्रश्न के लिए एक उत्तर चुनें। आपका कुल स्कोर 100 में से होगा।</span></p>
+    <div class="notice" id="disclaimer">This is a wellness self-assessment tool, not a medical diagnosis. Symptoms can have many causes. Seek advice from a qualified healthcare professional for persistent or concerning symptoms.<br><span class="hindi">यह स्वास्थ्य-जागरूकता के लिए स्व-मूल्यांकन है, चिकित्सा निदान नहीं। लक्षणों के कई कारण हो सकते हैं। लगातार या चिंताजनक लक्षणों के लिए योग्य स्वास्थ्य पेशेवर से सलाह लें।</span></div>
+    <button class="primary" id="startBtn" onclick="start()">Start Assessment → | मूल्यांकन शुरू करें →</button>
+  </main>
+  <main class="card hidden" id="quiz">
+    <div class="progressrow"><span id="progressText">Question 1 of 10</span><span id="answeredText">Answered: 0/10</span></div>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <div class="qnum" id="qnum">QUESTION 1</div>
+    <div class="question" id="question"></div>
+    <div class="hindi" id="questionHindi"></div>
+    <div class="hint" id="hint"></div>
+    <div class="options" id="options"></div>
+    <div class="nav">
+      <button id="backBtn" onclick="back()">← Back</button>
+      <button class="next" id="nextBtn" onclick="next()" disabled>Next →</button>
+    </div>
+  </main>
+  <main class="card hidden result" id="result">
+    <div class="brand">DRALT HEALTHUP</div>
+    <h1 id="resultTitle">YOUR RECHARGE HEALTH SCORE<br><span class="hindi">आपका RECHARGE HEALTH SCORE</span></h1>
+    <div class="score"><span id="total">0</span><span style="font-size:22px"> / 100</span></div>
+    <div class="resultband" id="band"></div>
+    <p class="resultcopy" id="resultMessage"></p>
+    <div class="notice" id="resultDisclaimer">This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.<br><span class="hindi">यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षणों या चिंताओं के लिए योग्य स्वास्थ्य पेशेवर से चर्चा करें।</span></div>
+    <button class="primary" onclick="restart()" id="restartBtn">Restart Assessment | मूल्यांकन फिर से शुरू करें</button>
+  </main>
+</div>
+<script>
+const questions = [
+{en:"How energetic do you feel throughout the day?",hi:"आप पूरे दिन कितनी ऊर्जा महसूस करते हैं?",hintEn:"Consider your usual energy level from morning to evening.",hintHi:"सुबह से शाम तक अपनी सामान्य ऊर्जा के स्तर पर विचार करें।",opts:[
+["I feel very low in energy almost throughout the day.","मुझे लगभग पूरे दिन बहुत कम ऊर्जा महसूस होती है।",1],
+["I often feel low in energy and struggle with daily tasks.","मुझे अक्सर कम ऊर्जा महसूस होती है और दैनिक कार्यों में कठिनाई होती है।",3],
+["My energy is moderate; I have some low-energy periods.","मेरी ऊर्जा मध्यम रहती है; कभी-कभी ऊर्जा कम हो जाती है।",5],
+["I feel energetic on most days.","मैं अधिकांश दिनों में ऊर्जावान महसूस करता/करती हूँ।",8],
+["I consistently feel energetic throughout the day.","मैं पूरे दिन लगातार ऊर्जावान महसूस करता/करती हूँ।",10]]},
+{en:"How refreshed do you feel after waking up?",hi:"जागने के बाद आप कितना तरोताज़ा महसूस करते हैं?",hintEn:"Think about how you usually feel upon waking.",hintHi:"जागने पर आप सामान्यतः कैसा महसूस करते हैं, इस पर विचार करें।",opts:[
+["I wake up exhausted and unrefreshed.","मैं थका हुआ/थकी हुई और बिना ताज़गी के जागता/जागती हूँ।",1],
+["I often wake up tired.","मैं अक्सर थकान के साथ जागता/जागती हूँ।",3],
+["I sometimes feel refreshed, but often feel tired.","कभी ताज़गी महसूस होती है, लेकिन अक्सर थकान रहती है।",5],
+["I usually wake up refreshed.","मैं सामान्यतः तरोताज़ा होकर जागता/जागती हूँ।",8],
+["I consistently wake up fully refreshed and ready for the day.","मैं हमेशा पूरी ताज़गी और दिन के लिए तैयार होकर जागता/जागती हूँ।",10]]},
+{en:"How well can you work without getting tired?",hi:"आप बिना थके कितनी अच्छी तरह काम कर पाते हैं?",hintEn:"Consider your ability to sustain usual work or tasks.",hintHi:"अपने सामान्य काम या कार्यों को लगातार करने की क्षमता पर विचार करें।",opts:[
+["I get tired very quickly while working.","काम करते समय मैं बहुत जल्दी थक जाता/जाती हूँ।",1],
+["I often get tired before completing my work.","काम पूरा करने से पहले मैं अक्सर थक जाता/जाती हूँ।",3],
+["I can work for a while, but fatigue sometimes limits me.","मैं कुछ समय काम कर सकता/सकती हूँ, लेकिन कभी-कभी थकान सीमित करती है।",5],
+["I can complete most work with little fatigue.","मैं अधिकांश काम कम थकान के साथ पूरा कर सकता/सकती हूँ।",8],
+["I can comfortably sustain my usual work without notable fatigue.","मैं बिना विशेष थकान के अपना सामान्य काम आराम से लगातार कर सकता/सकती हूँ।",10]]},
+{en:"How quickly do you recover after physical activity?",hi:"शारीरिक गतिविधि के बाद आप कितनी जल्दी सामान्य होते हैं?",hintEn:"Think about recovery after your usual physical activity.",hintHi:"अपनी सामान्य शारीरिक गतिविधि के बाद ठीक होने की गति पर विचार करें।",opts:[
+["I remain exhausted for a long time after activity.","गतिविधि के बाद मैं लंबे समय तक थका रहता/रहती हूँ।",1],
+["Recovery is slow and often affects the rest of my day.","रिकवरी धीमी होती है और अक्सर दिन के बाकी समय को प्रभावित करती है।",3],
+["I recover moderately, though sometimes need extra rest.","मैं मध्यम गति से ठीक होता/होती हूँ, हालांकि कभी अतिरिक्त आराम चाहिए।",5],
+["I usually recover well within a reasonable time.","मैं सामान्यतः उचित समय में अच्छी तरह रिकवर हो जाता/जाती हूँ।",8],
+["I recover comfortably and promptly after my usual activity.","मैं अपनी सामान्य गतिविधि के बाद आराम से और जल्दी रिकवर हो जाता/जाती हूँ।",10]]},
+{en:"How mentally alert do you feel during the day?",hi:"आप दिन में मानसिक रूप से कितने सतर्क महसूस करते हैं?",hintEn:"Consider focus, clarity, and alertness during your day.",hintHi:"दिनभर ध्यान, स्पष्टता और मानसिक सतर्कता पर विचार करें।",opts:[
+["I often feel mentally dull or foggy.","मैं अक्सर मानसिक रूप से सुस्त या धुंधला महसूस करता/करती हूँ।",1],
+["My alertness is frequently low and focus is difficult.","मेरी सतर्कता अक्सर कम रहती है और ध्यान लगाना कठिन होता है।",3],
+["My alertness varies; I have some difficulty focusing.","मेरी सतर्कता बदलती रहती है; कभी ध्यान लगाने में कठिनाई होती है।",5],
+["I feel mentally alert and focused most of the day.","मैं दिन के अधिकांश समय मानसिक रूप से सतर्क और केंद्रित रहता/रहती हूँ।",8],
+["I consistently feel clear, alert, and focused throughout the day.","मैं पूरे दिन लगातार स्पष्ट, सतर्क और केंद्रित महसूस करता/करती हूँ।",10]]},
+{en:"How often do you feel tired during the day?",hi:"दिन में आपको कितनी बार थकान महसूस होती है?",hintEn:"Consider frequency and impact of daytime tiredness.",hintHi:"दिन के समय थकान की आवृत्ति और उसके प्रभाव पर विचार करें।",opts:[
+["I feel tired almost all the time.","मुझे लगभग हर समय थकान महसूस होती है।",1],
+["I feel tired many times during the day.","मुझे दिन में कई बार थकान महसूस होती है।",3],
+["I occasionally feel tired during the day.","मुझे दिन में कभी-कभी थकान महसूस होती है।",5],
+["I rarely feel tired during the day.","मुझे दिन में बहुत कम थकान महसूस होती है।",8],
+["I hardly ever experience daytime tiredness.","मुझे दिन में लगभग कभी थकान महसूस नहीं होती है।",10]]},
+{en:"How long can you stay active without exhaustion?",hi:"आप बिना अत्यधिक थके कितनी देर सक्रिय रह सकते हैं?",hintEn:"Think about how long you can sustain your usual activities comfortably.",hintHi:"आप अपनी सामान्य गतिविधियों को आराम से कितनी देर जारी रख सकते हैं, इस पर विचार करें।",opts:[
+["I become exhausted after a very short period.","बहुत थोड़े समय में ही मैं अत्यधिक थक जाता/जाती हूँ।",1],
+["I can stay active only briefly before exhaustion.","अत्यधिक थकान से पहले मैं केवल थोड़ी देर सक्रिय रह पाता/पाती हूँ।",3],
+["I can remain active for a moderate period.","मैं मध्यम अवधि तक सक्रिय रह सकता/सकती हूँ।",5],
+["I can remain active for a long time with little exhaustion.","मैं बहुत कम थकान के साथ लंबे समय तक सक्रिय रह सकता/सकती हूँ।",8],
+["I can comfortably sustain activity for a long duration without exhaustion.","मैं बिना अत्यधिक थकान के लंबे समय तक आराम से सक्रिय रह सकता/सकती हूँ।",10]]},
+{en:"How well does your sleep restore your energy?",hi:"आपकी नींद आपकी ऊर्जा को कितनी अच्छी तरह पुनःस्थापित करती है?",hintEn:"Consider how rested and energized you feel after your usual sleep.",hintHi:"अपनी सामान्य नींद के बाद आराम और ऊर्जा के अनुभव पर विचार करें।",opts:[
+["My sleep does not restore my energy; I wake up exhausted.","मेरी नींद ऊर्जा बहाल नहीं करती; मैं थका हुआ/थकी हुई जागता/जागती हूँ।",1],
+["I often wake up tired despite sleeping.","सोने के बावजूद मैं अक्सर थका हुआ/थकी हुई जागता/जागती हूँ।",3],
+["Sleep restores some energy, but I often feel less rested.","नींद से कुछ ऊर्जा मिलती है, लेकिन अक्सर पूरा आराम नहीं मिलता।",5],
+["My sleep usually restores my energy well.","मेरी नींद सामान्यतः मेरी ऊर्जा अच्छी तरह बहाल करती है।",8],
+["My sleep consistently leaves me refreshed and energized.","मेरी नींद हमेशा मुझे तरोताज़ा और ऊर्जावान बनाती है।",10]]},
+{en:"How comfortably can you climb one flight of stairs?",hi:"आप एक मंज़िल की सीढ़ियाँ कितनी आराम से चढ़ पाते हैं?",hintEn:"Answer based on your usual experience; do not perform the activity just for this test.",hintHi:"अपने सामान्य अनुभव के आधार पर उत्तर दें; केवल इस टेस्ट के लिए गतिविधि न करें।",opts:[
+["I cannot climb one flight comfortably and feel severely exhausted.","मैं एक मंज़िल आराम से नहीं चढ़ पाता/पाती और बहुत थक जाता/जाती हूँ।",1],
+["I climb with significant effort or fatigue.","मुझे काफी प्रयास या थकान के साथ सीढ़ियाँ चढ़नी पड़ती हैं।",3],
+["I can climb, but experience some fatigue or discomfort.","मैं सीढ़ियाँ चढ़ सकता/सकती हूँ, लेकिन कुछ थकान या परेशानी होती है।",5],
+["I climb comfortably with little fatigue.","मैं बहुत कम थकान के साथ आराम से सीढ़ियाँ चढ़ता/चढ़ती हूँ।",8],
+["I climb one flight comfortably without unusual fatigue.","मैं बिना असामान्य थकान के एक मंज़िल आराम से चढ़ता/चढ़ती हूँ।",10]]},
+{en:"How well does your body perform daily activities?",hi:"आपका शरीर दैनिक गतिविधियों को कितनी अच्छी तरह करता है?",hintEn:"Consider your overall energy and capacity for routine daily tasks.",hintHi:"रोज़मर्रा के सामान्य कार्यों के लिए अपनी समग्र ऊर्जा और क्षमता पर विचार करें।",opts:[
+["I struggle with many daily activities due to low energy.","कम ऊर्जा के कारण मुझे कई दैनिक गतिविधियों में कठिनाई होती है।",1],
+["I often need extra rest or help for daily tasks.","दैनिक कार्यों के लिए मुझे अक्सर अतिरिक्त आराम या मदद चाहिए।",3],
+["I manage daily activities, but energy limitations sometimes affect me.","मैं दैनिक गतिविधियाँ कर लेता/लेती हूँ, लेकिन कभी-कभी ऊर्जा की कमी प्रभावित करती है।",5],
+["I perform most daily activities well and comfortably.","मैं अधिकांश दैनिक गतिविधियाँ अच्छी तरह और आराम से करता/करती हूँ।",8],
+["I consistently perform daily activities with good energy and ease.","मैं अच्छी ऊर्जा और सहजता के साथ दैनिक गतिविधियाँ लगातार करता/करती हूँ।",10]]}
+];
+let lang='en', index=0, answers=Array(questions.length).fill(null);
+function setLang(l){lang='en';}
+function start(){index=0;answers=Array(questions.length).fill(null);document.getElementById('welcome').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');render();}
+function render(){let q=questions[index];document.getElementById('progressText').innerHTML=`Question ${index+1} of ${questions.length}<br><span class=\"hindi\">प्रश्न ${index+1} / ${questions.length}</span>`;
+document.getElementById('answeredText').innerHTML=`Answered: ${answers.filter(x=>x!==null).length}/${questions.length}<br><span class=\"hindi\">उत्तर दिए: ${answers.filter(x=>x!==null).length}/${questions.length}</span>`;
+document.getElementById('bar').style.width=((index+1)/questions.length*100)+'%';document.getElementById('qnum').innerHTML=`QUESTION ${index+1}<br><span class=\"hindi\">प्रश्न ${index+1}</span>`;
+document.getElementById('question').textContent=q.en;document.getElementById('questionHindi').textContent=q.hi;document.getElementById('hint').innerHTML=q.hintEn+'<br><span class=\"hindi\">'+q.hintHi+'</span>'; 
+const opts=document.getElementById('options');opts.innerHTML='';q.opts.forEach((o,i)=>{let b=document.createElement('button');b.className='option'+(answers[index]===i?' selected':'');b.innerHTML=`<span class="scorepill">${o[2]}</span><span class="opttext">${o[0]}<span class="optHindi">${o[1]}</span></span>`;b.onclick=()=>{answers[index]=i;render();};opts.appendChild(b);});
+document.getElementById('backBtn').innerHTML='← Back | पीछे';document.getElementById('backBtn').disabled=index===0;
+document.getElementById('nextBtn').innerHTML=index===questions.length-1?'View Score | स्कोर देखें':'Next → | आगे →';document.getElementById('nextBtn').disabled=answers[index]===null;}
+function back(){if(index>0){index--;render();}}
+function next(){if(answers[index]===null)return;if(index<questions.length-1){index++;render();}else showResult();}
+function showResult(){let total=answers.reduce((sum,a,i)=>sum+questions[i].opts[a][2],0);document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.remove('hidden');document.getElementById('total').textContent=total;
+let band,msg;if(total>=90){band=lang==='en'?'Excellent': 'उत्कृष्ट';msg=lang==='en'?'Your self-reported score is in the excellent range. Continue to observe your wellbeing habits.':'आपका स्व-मूल्यांकन स्कोर उत्कृष्ट श्रेणी में है। अपनी स्वास्थ्य आदतों पर ध्यान बनाए रखें।';}
+else if(total>=80){band=lang==='en'?'Very Good':'बहुत अच्छा';msg=lang==='en'?'Your self-reported score is in the very good range.':'आपका स्व-मूल्यांकन स्कोर बहुत अच्छी श्रेणी में है।';}
+else if(total>=70){band=lang==='en'?'Good':'अच्छा';msg=lang==='en'?'Your self-reported score is in the good range.':'आपका स्व-मूल्यांकन स्कोर अच्छी श्रेणी में है।';}
+else if(total>=60){band=lang==='en'?'Fair':'संतोषजनक';msg=lang==='en'?'Some responses suggest areas you may wish to reflect on.':'कुछ उत्तर ऐसे क्षेत्रों की ओर संकेत करते हैं जिन पर आप विचार कर सकते हैं।';}
+else if(total>=40){band=lang==='en'?'Needs Improvement':'सुधार की आवश्यकता';msg=lang==='en'?'Your responses suggest several symptoms or concerns. Consider discussing persistent symptoms with a healthcare professional.':'आपके उत्तर कई लक्षणों या चिंताओं की ओर संकेत करते हैं। लगातार लक्षणों के लिए स्वास्थ्य पेशेवर से चर्चा करें।';}
+else{band=lang==='en'?'Poor':'कम';msg=lang==='en'?'Your responses indicate notable symptom concerns. Consider seeking guidance from a qualified healthcare professional.':'आपके उत्तर उल्लेखनीय लक्षणों की चिंताओं की ओर संकेत करते हैं। योग्य स्वास्थ्य पेशेवर से मार्गदर्शन लेने पर विचार करें।';}
+let msgHi={'Excellent':'आपका स्व-मूल्यांकन स्कोर उत्कृष्ट श्रेणी में है। अपनी स्वास्थ्य आदतों पर ध्यान बनाए रखें।','Very Good':'आपका स्व-मूल्यांकन स्कोर बहुत अच्छी श्रेणी में है।','Good':'आपका स्व-मूल्यांकन स्कोर अच्छी श्रेणी में है।','Fair':'कुछ उत्तर ऐसे क्षेत्रों की ओर संकेत करते हैं जिन पर आप विचार कर सकते हैं।','Needs Improvement':'आपके उत्तर कई लक्षणों या चिंताओं की ओर संकेत करते हैं। लगातार लक्षणों के लिए स्वास्थ्य पेशेवर से चर्चा करें।','Poor':'आपके उत्तर उल्लेखनीय लक्षणों की चिंताओं की ओर संकेत करते हैं। योग्य स्वास्थ्य पेशेवर से मार्गदर्शन लेने पर विचार करें।'};let bandHi={'Excellent':'उत्कृष्ट','Very Good':'बहुत अच्छा','Good':'अच्छा','Fair':'संतोषजनक','Needs Improvement':'सुधार की आवश्यकता','Poor':'कम'};document.getElementById('band').innerHTML=band+' | <span class=\"hindi\">'+(bandHi[band]||band)+'</span>';document.getElementById('resultMessage').innerHTML=msg+'<br><span class=\"hindi\">'+(msgHi[band]||msg)+'</span>';document.getElementById('resultTitle').innerHTML='YOUR RECHARGE HEALTH SCORE<br><span class=\"hindi\">आपका RECHARGE HEALTH SCORE</span>';document.getElementById('restartBtn').innerHTML='Restart Assessment | मूल्यांकन फिर से शुरू करें';document.getElementById('resultDisclaimer').innerHTML='This score is for wellness awareness only and is not a diagnosis. Discuss persistent symptoms or concerns with a qualified healthcare professional.<br><span class=\"hindi\">यह स्कोर केवल स्वास्थ्य-जागरूकता के लिए है, निदान नहीं। लगातार लक्षणों या चिंताओं के लिए योग्य स्वास्थ्य पेशेवर से चर्चा करें।</span>';}
+function restart(){document.getElementById('result').classList.add('hidden');document.getElementById('welcome').classList.remove('hidden');}
+</script>
+</body>
+</html>
