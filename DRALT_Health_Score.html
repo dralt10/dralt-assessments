@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DRALT Health Score Test | Masterclass</title>
+<title>DRALT Health Score Assessment</title>
 <style>
 
   :root {
@@ -31,28 +31,23 @@
     padding: 24px 0 40px;
   }
   .header {
-    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
-    color: white;
-    padding: 28px 22px;
-    border-radius: 20px;
+    background: #ffffff;
+    color: var(--text);
+    border: 1px solid #f0e6eb;
+    border-top: 3px solid #d58aaa;
+    padding: 30px 22px 26px;
+    border-radius: 18px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(105, 35, 65, .025);
   }
   .header h1 {
-    margin: 0 0 8px;
-    font-size: clamp(27px, 5vw, 36px);
-    line-height: 1.25;
-    font-weight: 800;
-  }
-  .header .subtitle {
-    font-size: clamp(18px, 3.5vw, 22px);
-    font-weight: 700;
-    margin: 8px 0;
-  }
-  .header .meta {
-    font-size: 17px;
-    margin: 10px 0 0;
-    opacity: .96;
+    margin: 0;
+    color: #9b315f;
+    font-size: clamp(25px, 5vw, 33px);
+    line-height: 1.35;
+    font-weight: 750;
+    letter-spacing: .1px;
   }
   .intro, .question, .result {
     background: var(--surface);
@@ -62,8 +57,12 @@
     margin-bottom: 18px;
     box-shadow: 0 3px 12px rgba(105, 35, 65, .045);
   }
-  .intro p { margin: 0 0 8px; font-size: 18px; }
-  .intro p:last-child { margin-bottom: 0; }
+  .intro p { margin: 0; font-size: 18px; }
+  .intro-content { display: flex; flex-direction: column; gap: 22px; }
+  .intro-group { display: flex; flex-direction: column; gap: 8px; }
+  .intro-disclaimer { padding-top: 18px; border-top: 1px solid #eee2e8; }
+  .intro-disclaimer p { color: var(--muted); line-height: 1.75; }
+  .intro-instructions p { line-height: 1.75; }
   .q-heading {
     color: var(--brand);
     font-size: clamp(21px, 4vw, 25px);
@@ -79,31 +78,32 @@
   }
   .q-hi {
     font-size: clamp(18px, 3.4vw, 20px);
-    line-height: 1.7;
-    margin: 0 0 18px;
+    line-height: 1.75;
+    margin: 0 0 22px;
     color: #39333e;
   }
-  .options { display: grid; gap: 11px; }
+  .options { display: grid; gap: 14px; }
   .option {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 0;
     border: 1.5px solid #e5d8df;
     background: #fff;
     border-radius: 12px;
-    padding: 13px 14px;
+    padding: 16px 16px;
     cursor: pointer;
     transition: border-color .15s, background .15s;
   }
   .option:hover { border-color: var(--brand); background: #fff9fc; }
   .option.selected { border-color: var(--brand); background: var(--brand-light); }
   .option input {
-    flex: 0 0 auto;
-    margin-top: 6px;
-    width: 20px;
-    height: 20px;
-    accent-color: var(--brand);
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
   }
+  .option:focus-within { outline: 2px solid #d7a2bd; outline-offset: 2px; }
   .option-text {
     font-size: clamp(17px, 3.3vw, 19px);
     line-height: 1.55;
@@ -155,6 +155,15 @@
   .calc label { display:block; font-size:17px; color:var(--muted); margin-bottom:6px; }
   .calc input, .calc select { width:100%; padding:12px; border:1px solid #d8cbd2; border-radius:8px; font-size:18px; font-family:inherit; margin-bottom:8px; }
   .calcresult { font-size:18px; line-height:1.6; margin-top:10px; color:var(--brand); font-weight:700; }
+  .question { display:none; }
+  .question.active { display:block; }
+  .navigation { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin:20px 0; }
+  .navigation button { min-width:130px; }
+  .font-tools { position:fixed; right:12px; bottom:16px; z-index:20; display:flex; gap:7px; opacity:.78; }
+  .font-tools button { min-width:40px; min-height:40px; padding:8px 10px; border-radius:50%; background:rgba(255,255,255,.9); color:#8d4666; border:1px solid #eadfe5; box-shadow:0 1px 5px rgba(105,35,65,.06); font-weight:600; font-size:15px; }
+  .font-tools button:hover { background:#fff7fa; border-color:#d8b4c5; opacity:1; }
+  .desc { font-size:18px; line-height:1.65; margin:0 0 18px; }
+  .actions.score-action { display:none; }
   .error { display:none; color:#a01940; text-align:center; font-weight:700; font-size:18px; margin:10px 0; }
   @media (max-width: 520px) {
     .calcgrid { grid-template-columns:1fr; }
@@ -171,16 +180,19 @@
 <div class="wrap">
   <header class="header">
     <h1>DRALT Health Score Assessment</h1>
-    <div class="subtitle">DRALT HealthUp Masterclass</div>
-    <div class="subtitle">DRALT स्वास्थ्य स्कोर आकलन</div>
-    <p class="meta">10 Questions · Maximum Score: 100</p>
   </header>
 
   <section class="intro" id="languagePage">
-    <p><strong>Instructions:</strong> Reflect on your health and choose one answer that best describes your usual experience.</p>
-    <p><strong>निर्देश:</strong> अपने स्वास्थ्य पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।</p>
-    <p>This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.</p>
-    <p>यह स्वास्थ्य-जागरूकता के लिए स्वयं-मूल्यांकन है, चिकित्सा निदान नहीं। शारीरिक टेस्ट केवल सुरक्षित और आरामदायक होने पर करें। दर्द, चक्कर, साँस फूलने या अस्थिरता होने पर टेस्ट छोड़ दें।</p>
+    <div class="intro-content">
+      <div class="intro-group intro-instructions">
+        <p><strong>Instructions:</strong> Reflect on your health and choose one answer that best describes your usual experience.</p>
+        <p><strong>निर्देश:</strong> अपने स्वास्थ्य पर विचार करें और वह उत्तर चुनें जो आपके सामान्य अनुभव का सबसे अच्छा वर्णन करता है।</p>
+      </div>
+      <div class="intro-group intro-disclaimer">
+        <p>This is a wellness self-reflection tool, not a medical diagnosis. Perform physical tests only if safe and comfortable for you. Skip any test that causes pain, dizziness, breathlessness, or instability.</p>
+        <p>यह स्वास्थ्य-जागरूकता के लिए स्वयं-मूल्यांकन है, चिकित्सा निदान नहीं। शारीरिक टेस्ट केवल सुरक्षित और आरामदायक होने पर करें। दर्द, चक्कर, साँस फूलने या अस्थिरता होने पर टेस्ट छोड़ दें।</p>
+      </div>
+    </div>
     <div class="actions"><button type="button" class="primary" id="startBtn">Start Assessment / आकलन शुरू करें</button></div>
   </section>
 
@@ -192,7 +204,8 @@
     <form id="assessment">
       <div id="questions"></div>
       <div class="error" id="error">Please answer all 10 questions before viewing your score.<br>कृपया स्कोर देखने से पहले सभी 10 प्रश्नों के उत्तर दें।</div>
-      <div class="actions"><button type="submit" class="primary">View My Score / मेरा स्कोर देखें</button></div>
+      <div class="navigation" id="questionNavigation"></div>
+      <div class="actions score-action" id="scoreAction"><button type="submit" class="primary">View My Score / मेरा स्कोर देखें</button></div>
     </form>
   </section>
 
@@ -206,6 +219,7 @@
     <div class="actions"><button type="button" class="secondary" id="restart">Restart Assessment / दोबारा आकलन करें</button></div>
   </section>
 </div>
+<div class="font-tools" aria-label="Text size controls"><button type="button" id="fontDown" aria-label="Decrease text size">A−</button><button type="button" id="fontUp" aria-label="Increase text size">A+</button></div>
 
 <script>
 const questions = [
@@ -253,6 +267,8 @@ hi:{q:"Balance टेस्ट में आप प्रत्येक पै�
 
 const scoreValues = [0, 2.5, 5, 7.5, 10];
 const questionContainer = document.getElementById("questions");
+let currentQuestionIndex = 0;
+let baseFontSize = 18;
 
 function buildQuestions() {
   questions.forEach((q, index) => {
@@ -304,6 +320,36 @@ function buildQuestions() {
   });
 }
 
+function showQuestion(index) {
+  currentQuestionIndex = Math.max(0, Math.min(index, questions.length - 1));
+  document.querySelectorAll(".question").forEach((section, i) => section.classList.toggle("active", i === currentQuestionIndex));
+  const nav = document.getElementById("questionNavigation");
+  nav.innerHTML = "";
+  const back = document.createElement("button");
+  back.type = "button"; back.className = "secondary"; back.textContent = "← Back / पीछे";
+  back.disabled = currentQuestionIndex === 0;
+  back.addEventListener("click", () => showQuestion(currentQuestionIndex - 1));
+  nav.appendChild(back);
+  if (currentQuestionIndex < questions.length - 1) {
+    const next = document.createElement("button");
+    next.type = "button"; next.className = "primary"; next.textContent = "Next / आगे →";
+    next.addEventListener("click", () => {
+      const chosen = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+      if (!chosen) { document.getElementById("error").style.display = "block"; return; }
+      document.getElementById("error").style.display = "none";
+      showQuestion(currentQuestionIndex + 1);
+    });
+    nav.appendChild(next);
+    document.getElementById("scoreAction").style.display = "none";
+  } else {
+    document.getElementById("scoreAction").style.display = "flex";
+  }
+  const answered = questions.reduce((count, q, i) => count + (document.querySelector(`input[name="q${i}"]:checked`) ? 1 : 0), 0);
+  document.getElementById("progressLabel").textContent = `Question ${currentQuestionIndex + 1} of 10 · ${answered} answered / ${answered} उत्तर दिए`;
+  document.getElementById("progressBar").style.width = `${(currentQuestionIndex + 1) * 10}%`;
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
 function updateProgress() {
   const answered = questions.reduce((count, q, i) =>
     count + (document.querySelector(`input[name="q${i}"]:checked`) ? 1 : 0), 0);
@@ -317,6 +363,7 @@ document.getElementById("startBtn").addEventListener("click", () => {
   document.getElementById("languagePage").style.display = "none";
   document.getElementById("testPage").style.display = "block";
   buildQuestions();
+  showQuestion(0);
   updateProgress();
   window.scrollTo({top:0, behavior:"smooth"});
 });
@@ -337,7 +384,7 @@ document.getElementById("assessment").addEventListener("submit", event => {
   if (answers.some(answer => !answer)) {
     document.getElementById("error").style.display = "block";
     const firstMissing = answers.findIndex(answer => !answer);
-    document.querySelectorAll(".question")[firstMissing].scrollIntoView({behavior:"smooth", block:"center"});
+    showQuestion(firstMissing);
     return;
   }
   const total = answers.reduce((sum, answer) => sum + scoreValues[Number(answer.value)], 0);
@@ -375,6 +422,9 @@ document.getElementById("restart").addEventListener("click", () => {
   document.getElementById("error").style.display = "none";
   document.getElementById("progressBar").style.width = "0";
   document.getElementById("progressLabel").textContent = "0 of 10 answered";
+  document.getElementById("questionNavigation").innerHTML = "";
+  document.getElementById("scoreAction").style.display = "none";
+  currentQuestionIndex = 0;
   window.scrollTo({top:0, behavior:"smooth"});
 });
 
@@ -407,6 +457,8 @@ function calculateWeight() {
 document.addEventListener("change", event => {
   if (event.target.id === "heightUnit") toggleHeightUnit();
 });
+document.getElementById("fontDown").addEventListener("click", () => { baseFontSize = Math.max(14, baseFontSize - 1); document.body.style.fontSize = baseFontSize + "px"; });
+document.getElementById("fontUp").addEventListener("click", () => { baseFontSize = Math.min(26, baseFontSize + 1); document.body.style.fontSize = baseFontSize + "px"; });
 document.addEventListener("input", event => {
   if (["height","feet","inches","weight"].includes(event.target.id)) calculateWeight();
 });
